@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "contracts"
+version = "0.1.0"
+description = "Algorand smart contracts"
+authors = ["earnest-x402 contributors"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+algokit-utils = "^4.0.0"
+python-dotenv = "^1.0.0"
+algorand-python = "^3"
+algorand-python-testing = "^1"
+
+[tool.poetry.group.dev.dependencies]
+algokit-client-generator = "^2.1.0"
+puyapy = "*"
+pytest = "^8"
+ruff = "^0.16.4"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.ruff]
+# Compiler and typed-client output. Regenerated on every build, never edited.
+extend-exclude = ["smart_contracts/artifacts"]
+# Both stated rather than inferred: the sources are written to 88 columns, and
+# the Python version is declared in poetry syntax that ruff does not read.
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+# Contract sources are compiled by puya, which accepts a subset of Python.
+# Both of these rules rewrite valid contract code into constructs that subset
+# rejects, and both were verified against the compiler rather than assumed:
+#   PLR1730  clamping `if` -> `min()`; puya: "Unsupported builtin: min".
+#   UP040    `X: TypeAlias = x` -> `type X = x`; the PEP 695 alias becomes a
+#            `TypeAliasType`, which drops the ARC-4 methods the code calls.
+# Neither rule can suggest anything else here, so nothing actionable is hidden.
+"smart_contracts/*/contract.py" = ["PLR1730", "UP040"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

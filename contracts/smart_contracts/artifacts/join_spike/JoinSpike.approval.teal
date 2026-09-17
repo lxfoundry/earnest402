@@ -1,0 +1,295 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 8 1 4
+    bytecblock "admin" "usdc_asset_id" "share_price"
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/join_spike/contract.py:32
+    // self.admin = Account()
+    bytec_0 // "admin"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/join_spike/contract.py:33
+    // self.usdc_asset_id = UInt64()
+    bytec_1 // "usdc_asset_id"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/join_spike/contract.py:34
+    // self.share_price = UInt64()
+    bytec_2 // "share_price"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/join_spike/contract.py:22
+    // class JoinSpike(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@8
+    pushbytess 0xe3cdef3b 0xf76681b7 // method "opt_in_asset(uint64)void", method "join(uint64,uint64)void"
+    txna ApplicationArgs 0
+    match opt_in_asset join
+    err
+
+main_create_NoOp@8:
+    // smart_contracts/join_spike/contract.py:22
+    // class JoinSpike(ARC4Contract):
+    pushbytes 0x9479ff63 // method "create(uint64,uint64)void"
+    txna ApplicationArgs 0
+    match create
+    err
+
+
+// smart_contracts.join_spike.contract.JoinSpike.create[routing]() -> void:
+create:
+    // smart_contracts/join_spike/contract.py:37
+    // @arc4.abimethod(create="require")
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/join_spike/contract.py:39
+    // self.admin = Txn.sender
+    bytec_0 // "admin"
+    txn Sender
+    app_global_put
+    // smart_contracts/join_spike/contract.py:40
+    // self.usdc_asset_id = usdc_asset_id
+    bytec_1 // "usdc_asset_id"
+    uncover 2
+    app_global_put
+    // smart_contracts/join_spike/contract.py:41
+    // self.share_price = share_price
+    bytec_2 // "share_price"
+    swap
+    app_global_put
+    // smart_contracts/join_spike/contract.py:37
+    // @arc4.abimethod(create="require")
+    intc_2 // 1
+    return
+
+
+// smart_contracts.join_spike.contract.JoinSpike.opt_in_asset[routing]() -> void:
+opt_in_asset:
+    // smart_contracts/join_spike/contract.py:43
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/join_spike/contract.py:45
+    // assert Txn.sender == self.admin, "sender must be admin"
+    txn Sender
+    intc_0 // 0
+    bytec_0 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // sender must be admin
+    // smart_contracts/join_spike/contract.py:46-51
+    // itxn.AssetTransfer(
+    //     xfer_asset=asset_id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=0,
+    //     fee=0,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/join_spike/contract.py:48
+    // asset_receiver=Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/join_spike/contract.py:49
+    // asset_amount=0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/join_spike/contract.py:46
+    // itxn.AssetTransfer(
+    intc_3 // axfer
+    itxn_field TypeEnum
+    // smart_contracts/join_spike/contract.py:50
+    // fee=0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/join_spike/contract.py:46-51
+    // itxn.AssetTransfer(
+    //     xfer_asset=asset_id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=0,
+    //     fee=0,
+    // ).submit()
+    itxn_submit
+    // smart_contracts/join_spike/contract.py:43
+    // @arc4.abimethod
+    intc_2 // 1
+    return
+
+
+// smart_contracts.join_spike.contract.JoinSpike.join[routing]() -> void:
+join:
+    // smart_contracts/join_spike/contract.py:53
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    dup
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/join_spike/contract.py:55-58
+    // # Checked before dereferencing the referenced transaction so a
+    // # self-referencing index fails on this assertion specifically,
+    // # rather than on a field read from the wrong transaction type.
+    // assert payment_index != Txn.group_index, (
+    dup
+    txn GroupIndex
+    !=
+    // smart_contracts/join_spike/contract.py:55-60
+    // # Checked before dereferencing the referenced transaction so a
+    // # self-referencing index fails on this assertion specifically,
+    // # rather than on a field read from the wrong transaction type.
+    // assert payment_index != Txn.group_index, (
+    //     "payment_index must not reference the app call itself"
+    // )
+    assert // payment_index must not reference the app call itself
+    // smart_contracts/join_spike/contract.py:62
+    // payment = gtxn.AssetTransferTransaction(payment_index)
+    dup
+    gtxns TypeEnum
+    intc_3 // axfer
+    ==
+    assert // transaction type is axfer
+    // smart_contracts/join_spike/contract.py:63
+    // assert payment.xfer_asset.id == self.usdc_asset_id, "wrong asset"
+    dup
+    gtxns XferAsset
+    intc_0 // 0
+    bytec_1 // "usdc_asset_id"
+    app_global_get_ex
+    assert // check self.usdc_asset_id exists
+    ==
+    assert // wrong asset
+    // smart_contracts/join_spike/contract.py:64
+    // assert payment.asset_receiver == Global.current_application_address, (
+    dup
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/join_spike/contract.py:64-66
+    // assert payment.asset_receiver == Global.current_application_address, (
+    //     "payment must be made to this app account"
+    // )
+    assert // payment must be made to this app account
+    // smart_contracts/join_spike/contract.py:67
+    // assert payment.sender == Txn.sender, (
+    dup
+    gtxns Sender
+    txn Sender
+    ==
+    // smart_contracts/join_spike/contract.py:67-69
+    // assert payment.sender == Txn.sender, (
+    //     "referenced payment sender must match the caller"
+    // )
+    assert // referenced payment sender must match the caller
+    // smart_contracts/join_spike/contract.py:70
+    // assert payment.asset_amount == self.share_price, "wrong amount"
+    dup
+    gtxns AssetAmount
+    intc_0 // 0
+    bytec_2 // "share_price"
+    app_global_get_ex
+    assert // check self.share_price exists
+    ==
+    assert // wrong amount
+    // smart_contracts/join_spike/contract.py:71
+    // assert payment.asset_close_to == Global.zero_address, (
+    dup
+    gtxns AssetCloseTo
+    global ZeroAddress
+    ==
+    // smart_contracts/join_spike/contract.py:71-73
+    // assert payment.asset_close_to == Global.zero_address, (
+    //     "asset_close_to must be unset"
+    // )
+    assert // asset_close_to must be unset
+    // smart_contracts/join_spike/contract.py:74
+    // assert payment.rekey_to == Global.zero_address, "rekey_to must be unset"
+    dup
+    gtxns RekeyTo
+    global ZeroAddress
+    ==
+    assert // rekey_to must be unset
+    // smart_contracts/join_spike/contract.py:76
+    // self.payers[agreement_id] = Txn.sender
+    txn Sender
+    uncover 2
+    itob
+    pushbytes "p_"
+    swap
+    concat
+    swap
+    box_put
+    // smart_contracts/join_spike/contract.py:81
+    // payer=arc4.Address(Txn.sender),
+    txn Sender
+    // smart_contracts/join_spike/contract.py:82
+    // payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    swap
+    gtxns TxID
+    pushbytes 0x0020
+    swap
+    concat
+    // smart_contracts/join_spike/contract.py:79-83
+    // Joined(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     payer=arc4.Address(Txn.sender),
+    //     payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    // )
+    cover 2
+    concat
+    pushbytes 0x002a
+    concat
+    swap
+    concat
+    // smart_contracts/join_spike/contract.py:78-84
+    // arc4.emit(
+    //     Joined(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         payer=arc4.Address(Txn.sender),
+    //         payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    //     )
+    // )
+    pushbytes 0xdfc49b1a // method "Joined(uint64,address,byte[])"
+    swap
+    concat
+    log
+    // smart_contracts/join_spike/contract.py:53
+    // @arc4.abimethod
+    intc_2 // 1
+    return

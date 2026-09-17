@@ -1,0 +1,2760 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 1 0 8 32
+    bytecblock "a" 0x72 "admin" "usdc_asset_id" "paused" "agreement_count" 0x01 "treasury" 0xf76681b7 0x3dc96357
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/escrow/contract.py:158
+    // self.admin = GlobalState(Account())
+    bytec_2 // "admin"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/escrow/contract.py:159-161
+    // # Configuration only: read off-chain as the conventional beneficiary
+    // # for `hash` agreements. No fund-moving path in this contract reads it.
+    // self.treasury = GlobalState(Account())
+    bytec 7 // "treasury"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/escrow/contract.py:162
+    // self.usdc_asset_id = GlobalState(UInt64(0))
+    bytec_3 // "usdc_asset_id"
+    intc_1 // 0
+    app_global_put
+    // smart_contracts/escrow/contract.py:163
+    // self.agreement_count = GlobalState(UInt64(0))
+    bytec 5 // "agreement_count"
+    intc_1 // 0
+    app_global_put
+    // smart_contracts/escrow/contract.py:164
+    // self.paused = GlobalState(UInt64(0))
+    bytec 4 // "paused"
+    intc_1 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/escrow/contract.py:156
+    // class Escrow(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@17
+    pushbytess 0xe3cdef3b 0x3ba106ea // method "opt_in_asset(uint64)void", method "create_agreement(uint64,uint64,uint64,uint64,uint64,byte[],address,address,pay)uint64"
+    bytec 8 // method "join(uint64,uint64)void"
+    pushbytess 0x81d6f306 0xdb674e6a 0x575088fd 0x9368b091 0x263141b3 0xcb7c6df2 0x44f2c1be 0x0a8a4676 // method "release_hash(uint64,byte[])void", method "release_quorum(uint64)void", method "expire(uint64)void", method "refund_next(uint64,uint64)void", method "claim_refund(uint64,uint64)void", method "close(uint64)void", method "set_admin(address)void", method "set_paused(uint64)void"
+    txna ApplicationArgs 0
+    match opt_in_asset create_agreement join release_hash release_quorum expire refund_next claim_refund close set_admin set_paused
+    err
+
+main_create_NoOp@17:
+    // smart_contracts/escrow/contract.py:156
+    // class Escrow(ARC4Contract):
+    pushbytes 0x442b73fb // method "bootstrap(uint64,address)void"
+    txna ApplicationArgs 0
+    match bootstrap
+    err
+
+
+// smart_contracts.escrow.contract.Escrow.bootstrap[routing]() -> void:
+bootstrap:
+    // smart_contracts/escrow/contract.py:167
+    // @arc4.abimethod(create="require")
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/escrow/contract.py:172
+    // self.admin.value = Txn.sender
+    bytec_2 // "admin"
+    txn Sender
+    app_global_put
+    // smart_contracts/escrow/contract.py:173
+    // self.treasury.value = treasury
+    bytec 7 // "treasury"
+    swap
+    app_global_put
+    // smart_contracts/escrow/contract.py:174
+    // self.usdc_asset_id.value = usdc_asset_id
+    bytec_3 // "usdc_asset_id"
+    swap
+    app_global_put
+    // smart_contracts/escrow/contract.py:167
+    // @arc4.abimethod(create="require")
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow.opt_in_asset[routing]() -> void:
+opt_in_asset:
+    // smart_contracts/escrow/contract.py:176
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/escrow/contract.py:178
+    // assert Txn.sender == self.admin.value, "sender must be admin"
+    txn Sender
+    intc_1 // 0
+    bytec_2 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // sender must be admin
+    // smart_contracts/escrow/contract.py:179-184
+    // itxn.AssetTransfer(
+    //     xfer_asset=asset_id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=0,
+    //     fee=0,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/escrow/contract.py:181
+    // asset_receiver=Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/escrow/contract.py:182
+    // asset_amount=0,
+    intc_1 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/escrow/contract.py:179
+    // itxn.AssetTransfer(
+    pushint 4 // axfer
+    itxn_field TypeEnum
+    // smart_contracts/escrow/contract.py:183
+    // fee=0,
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/escrow/contract.py:179-184
+    // itxn.AssetTransfer(
+    //     xfer_asset=asset_id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=0,
+    //     fee=0,
+    // ).submit()
+    itxn_submit
+    // smart_contracts/escrow/contract.py:176
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow.create_agreement[routing]() -> void:
+create_agreement:
+    // smart_contracts/escrow/contract.py:238
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    cover 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    cover 2
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    cover 2
+    txna ApplicationArgs 5
+    dup
+    cover 6
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 6
+    dup
+    intc_1 // 0
+    extract_uint16 // on error: invalid array length header
+    pushint 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    dup
+    cover 2
+    cover 7
+    txna ApplicationArgs 7
+    dup
+    cover 10
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 8
+    dup
+    cover 11
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txn GroupIndex
+    intc_0 // 1
+    -
+    dup
+    cover 6
+    gtxns TypeEnum
+    intc_0 // pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/escrow/contract.py:251
+    // assert Txn.sender == self.admin.value, "sender must be admin"
+    txn Sender
+    intc_1 // 0
+    bytec_2 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // sender must be admin
+    // smart_contracts/escrow/contract.py:252
+    // assert self.paused.value == 0, "contract is paused"
+    intc_1 // 0
+    bytec 4 // "paused"
+    app_global_get_ex
+    assert // check self.paused exists
+    !
+    assert // contract is paused
+    // smart_contracts/escrow/contract.py:254-255
+    // # Shape-independent validity.
+    // assert deadline > Global.latest_timestamp, "deadline must be in the future"
+    global LatestTimestamp
+    uncover 2
+    <
+    assert // deadline must be in the future
+    // smart_contracts/escrow/contract.py:256
+    // assert share_price > 0, "share_price must be positive"
+    uncover 2
+    assert // share_price must be positive
+    // smart_contracts/escrow/contract.py:257
+    // assert beneficiary != Global.zero_address, "beneficiary must be set"
+    dup
+    global ZeroAddress
+    !=
+    assert // beneficiary must be set
+    // smart_contracts/escrow/contract.py:258
+    // assert self._can_receive(beneficiary, Asset(self.usdc_asset_id.value)), (
+    intc_1 // 0
+    bytec_3 // "usdc_asset_id"
+    app_global_get_ex
+    assert // check self.usdc_asset_id exists
+    callsub _can_receive
+    // smart_contracts/escrow/contract.py:258-260
+    // assert self._can_receive(beneficiary, Asset(self.usdc_asset_id.value)), (
+    //     "beneficiary must be able to receive USDC"
+    // )
+    assert // beneficiary must be able to receive USDC
+    // smart_contracts/escrow/contract.py:261
+    // assert commit_hash.length == HASH_BYTES, "commit_hash must be 32 bytes"
+    len
+    intc_3 // 32
+    ==
+    assert // commit_hash must be 32 bytes
+    // smart_contracts/escrow/contract.py:263
+    // zero_hash = op.bzero(HASH_BYTES)
+    intc_3 // 32
+    bzero
+    swap
+    // smart_contracts/escrow/contract.py:265-266
+    // # Per-condition validity.
+    // if condition == UInt64(CONDITION_HASH):
+    bnz create_agreement_else_body@3
+    // smart_contracts/escrow/contract.py:267-283
+    // # Seat count and condition are independent. A single-seat `hash`
+    // # agreement is the delivery escrow; a multi-seat one is a pool
+    // # whose release condition is the deliverable rather than the
+    // # payer count, which is the only shape that can hold N buyers'
+    // # money against a specific artifact.
+    // #
+    // # Fixed seat count, same reason as `quorum` (spec 4): a payer past
+    // # the quota would own `1/seats` of something they priced at
+    // # `1/min_seats`, and slack seats are unreachable in any case.
+    // #
+    // # The lower bound is explicit because nothing else supplies one:
+    // # `min_seats == 1` used to carry it, and `quorum`'s own floor is
+    // # in the other branch. A zero-seat agreement would be inert --
+    // # `join` asserts `seats < max_seats` -- and its creator could
+    // # reclaim it (spec 2.3), but it is still a row no payer can reach
+    // # parking a deposit, and the validity table (spec 5.1) excludes it.
+    // assert min_seats >= 1, "min_seats must be at least 1"
+    dig 3
+    dup
+    assert // min_seats must be at least 1
+    // smart_contracts/escrow/contract.py:284
+    // assert max_seats == min_seats, "max_seats must equal min_seats"
+    dig 3
+    dup
+    uncover 2
+    ==
+    assert // max_seats must equal min_seats
+    // smart_contracts/escrow/contract.py:285
+    // assert max_seats <= MAX_SEATS_CEILING, "max_seats exceeds the ceiling"
+    pushint 20
+    <=
+    assert // max_seats exceeds the ceiling
+    // smart_contracts/escrow/contract.py:286
+    // assert commit_hash != zero_hash, "hash requires a commit_hash"
+    dig 5
+    !=
+    assert // hash requires a commit_hash
+    // smart_contracts/escrow/contract.py:287
+    // assert verifier != Global.zero_address, "hash requires a verifier"
+    dig 6
+    global ZeroAddress
+    !=
+    assert // hash requires a verifier
+
+create_agreement_after_if_else@4:
+    // smart_contracts/escrow/contract.py:301-302
+    // # Creation deposit: both boxes' minimum balance plus the fee reserve.
+    // assert mbr_payment.receiver == Global.current_application_address, (
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/escrow/contract.py:301-304
+    // # Creation deposit: both boxes' minimum balance plus the fee reserve.
+    // assert mbr_payment.receiver == Global.current_application_address, (
+    //     "deposit must pay this application"
+    // )
+    assert // deposit must pay this application
+    // smart_contracts/escrow/contract.py:305
+    // assert mbr_payment.sender == Txn.sender, "deposit must come from the caller"
+    dup
+    gtxns Sender
+    txn Sender
+    ==
+    assert // deposit must come from the caller
+    // smart_contracts/escrow/contract.py:306-313
+    // # Exact, not a floor. The amount is deterministic from `max_seats`,
+    // # and `close` returns the box minimum balance plus the *unspent*
+    // # reserve -- a computed figure, not whatever was sent. Anything over
+    // # the required deposit would therefore have no path out: no method
+    // # sweeps the application account and the application has no delete
+    // # handler. Rejecting an overpayment costs the admin a retry; accepting
+    // # one locks the excess for good.
+    // assert mbr_payment.amount == self._required_deposit(max_seats), (
+    gtxns Amount
+    // smart_contracts/escrow/contract.py:220
+    // return self._box_mbr(max_seats) + self._fee_reserve(max_seats)
+    swap
+    dup
+    callsub _box_mbr
+    // smart_contracts/escrow/contract.py:215
+    // return (max_seats + UInt64(1)) * Global.min_txn_fee
+    dig 1
+    intc_0 // 1
+    +
+    global MinTxnFee
+    *
+    // smart_contracts/escrow/contract.py:220
+    // return self._box_mbr(max_seats) + self._fee_reserve(max_seats)
+    +
+    // smart_contracts/escrow/contract.py:306-313
+    // # Exact, not a floor. The amount is deterministic from `max_seats`,
+    // # and `close` returns the box minimum balance plus the *unspent*
+    // # reserve -- a computed figure, not whatever was sent. Anything over
+    // # the required deposit would therefore have no path out: no method
+    // # sweeps the application account and the application has no delete
+    // # handler. Rejecting an overpayment costs the admin a retry; accepting
+    // # one locks the excess for good.
+    // assert mbr_payment.amount == self._required_deposit(max_seats), (
+    uncover 2
+    ==
+    // smart_contracts/escrow/contract.py:306-315
+    // # Exact, not a floor. The amount is deterministic from `max_seats`,
+    // # and `close` returns the box minimum balance plus the *unspent*
+    // # reserve -- a computed figure, not whatever was sent. Anything over
+    // # the required deposit would therefore have no path out: no method
+    // # sweeps the application account and the application has no delete
+    // # handler. Rejecting an overpayment costs the admin a retry; accepting
+    // # one locks the excess for good.
+    // assert mbr_payment.amount == self._required_deposit(max_seats), (
+    //     "deposit must equal box MBR plus the fee reserve"
+    // )
+    assert // deposit must equal box MBR plus the fee reserve
+    // smart_contracts/escrow/contract.py:317
+    // agreement_id = self.agreement_count.value + UInt64(1)
+    intc_1 // 0
+    bytec 5 // "agreement_count"
+    app_global_get_ex
+    assert // check self.agreement_count exists
+    intc_0 // 1
+    +
+    // smart_contracts/escrow/contract.py:318
+    // self.agreement_count.value = agreement_id
+    bytec 5 // "agreement_count"
+    dig 1
+    app_global_put
+    // smart_contracts/escrow/contract.py:321
+    // condition=arc4.UInt8(condition),
+    uncover 3
+    itob
+    dup
+    bitlen
+    intc_2 // 8
+    <=
+    assert // overflow
+    extract 7 1
+    // smart_contracts/escrow/contract.py:322
+    // state=arc4.UInt8(STATE_OPEN),
+    intc_1 // 0
+    itob
+    // smart_contracts/escrow/contract.py:325
+    // min_seats=arc4.UInt16(min_seats),
+    uncover 4
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:326
+    // max_seats=arc4.UInt16(max_seats),
+    dig 4
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:334
+    // creator=arc4.Address(Txn.sender),
+    txn Sender
+    // smart_contracts/escrow/contract.py:320-335
+    // self.agreements[agreement_id] = Agreement(
+    //     condition=arc4.UInt8(condition),
+    //     state=arc4.UInt8(STATE_OPEN),
+    //     deadline=arc4.UInt64(deadline),
+    //     share_price=arc4.UInt64(share_price),
+    //     min_seats=arc4.UInt16(min_seats),
+    //     max_seats=arc4.UInt16(max_seats),
+    //     seats=arc4.UInt16(0),
+    //     refund_cursor=arc4.UInt16(0),
+    //     unclaimed_seats=arc4.UInt16(0),
+    //     total_held=arc4.UInt64(0),
+    //     commit_hash=Hash32.from_bytes(commit_hash),
+    //     beneficiary=arc4.Address(beneficiary),
+    //     verifier=arc4.Address(verifier),
+    //     creator=arc4.Address(Txn.sender),
+    // )
+    dig 4
+    // smart_contracts/escrow/contract.py:322
+    // state=arc4.UInt8(STATE_OPEN),
+    pushbytes 0x00
+    // smart_contracts/escrow/contract.py:320-335
+    // self.agreements[agreement_id] = Agreement(
+    //     condition=arc4.UInt8(condition),
+    //     state=arc4.UInt8(STATE_OPEN),
+    //     deadline=arc4.UInt64(deadline),
+    //     share_price=arc4.UInt64(share_price),
+    //     min_seats=arc4.UInt16(min_seats),
+    //     max_seats=arc4.UInt16(max_seats),
+    //     seats=arc4.UInt16(0),
+    //     refund_cursor=arc4.UInt16(0),
+    //     unclaimed_seats=arc4.UInt16(0),
+    //     total_held=arc4.UInt64(0),
+    //     commit_hash=Hash32.from_bytes(commit_hash),
+    //     beneficiary=arc4.Address(beneficiary),
+    //     verifier=arc4.Address(verifier),
+    //     creator=arc4.Address(Txn.sender),
+    // )
+    concat
+    uncover 9
+    dup
+    cover 6
+    concat
+    uncover 12
+    dup
+    cover 7
+    concat
+    dig 3
+    concat
+    dig 2
+    concat
+    pushbytes 0x000000000000
+    concat
+    uncover 4
+    concat
+    uncover 9
+    concat
+    uncover 10
+    dup
+    cover 3
+    concat
+    uncover 10
+    dup
+    cover 4
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:320
+    // self.agreements[agreement_id] = Agreement(
+    uncover 8
+    itob
+    bytec_0 // "a"
+    dig 1
+    concat
+    // smart_contracts/escrow/contract.py:320-335
+    // self.agreements[agreement_id] = Agreement(
+    //     condition=arc4.UInt8(condition),
+    //     state=arc4.UInt8(STATE_OPEN),
+    //     deadline=arc4.UInt64(deadline),
+    //     share_price=arc4.UInt64(share_price),
+    //     min_seats=arc4.UInt16(min_seats),
+    //     max_seats=arc4.UInt16(max_seats),
+    //     seats=arc4.UInt16(0),
+    //     refund_cursor=arc4.UInt16(0),
+    //     unclaimed_seats=arc4.UInt16(0),
+    //     total_held=arc4.UInt64(0),
+    //     commit_hash=Hash32.from_bytes(commit_hash),
+    //     beneficiary=arc4.Address(beneficiary),
+    //     verifier=arc4.Address(verifier),
+    //     creator=arc4.Address(Txn.sender),
+    // )
+    uncover 2
+    box_put
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    dig 1
+    concat
+    // smart_contracts/escrow/contract.py:340
+    // self._roster_key(agreement_id), UInt64(SEAT_BYTES) * max_seats
+    pushint 40
+    uncover 10
+    *
+    // smart_contracts/escrow/contract.py:337-341
+    // # Pre-size the roster so no join can ever fail for want of minimum
+    // # balance. Every seat's storage exists before the first payment.
+    // assert op.Box.create(
+    //     self._roster_key(agreement_id), UInt64(SEAT_BYTES) * max_seats
+    // ), "roster box already exists"
+    box_create
+    assert // roster box already exists
+    // smart_contracts/escrow/contract.py:344-353
+    // AgreementCreated(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     condition=arc4.UInt8(condition),
+    //     deadline=arc4.UInt64(deadline),
+    //     share_price=arc4.UInt64(share_price),
+    //     min_seats=arc4.UInt16(min_seats),
+    //     max_seats=arc4.UInt16(max_seats),
+    //     beneficiary=arc4.Address(beneficiary),
+    //     verifier=arc4.Address(verifier),
+    // )
+    dup
+    uncover 8
+    concat
+    uncover 6
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 2
+    concat
+    uncover 2
+    concat
+    // smart_contracts/escrow/contract.py:343-354
+    // arc4.emit(
+    //     AgreementCreated(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         condition=arc4.UInt8(condition),
+    //         deadline=arc4.UInt64(deadline),
+    //         share_price=arc4.UInt64(share_price),
+    //         min_seats=arc4.UInt16(min_seats),
+    //         max_seats=arc4.UInt16(max_seats),
+    //         beneficiary=arc4.Address(beneficiary),
+    //         verifier=arc4.Address(verifier),
+    //     )
+    // )
+    pushbytes 0x06503009 // method "AgreementCreated(uint64,uint8,uint64,uint64,uint16,uint16,address,address)"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:238
+    // @arc4.abimethod
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+create_agreement_else_body@3:
+    // smart_contracts/escrow/contract.py:289
+    // assert condition == UInt64(CONDITION_QUORUM), "unknown condition"
+    dig 4
+    intc_0 // 1
+    ==
+    assert // unknown condition
+    // smart_contracts/escrow/contract.py:290
+    // assert min_seats > 1, "quorum requires min_seats > 1"
+    dig 3
+    dup
+    intc_0 // 1
+    >
+    assert // quorum requires min_seats > 1
+    // smart_contracts/escrow/contract.py:291-296
+    // # Fixed deliverable, fixed price: the supplier is owed
+    // # `share_price * min_seats`, so a seat past the quota buys nothing.
+    // # Slack is unreachable in any case -- reaching `min_seats` leaves
+    // # OPEN and `join` only accepts OPEN -- so it would lock roster
+    // # minimum balance for storage no payer can ever use (spec 4).
+    // assert max_seats == min_seats, "max_seats must equal min_seats"
+    dig 3
+    dup
+    uncover 2
+    ==
+    assert // max_seats must equal min_seats
+    // smart_contracts/escrow/contract.py:297
+    // assert max_seats <= MAX_SEATS_CEILING, "max_seats exceeds the ceiling"
+    pushint 20
+    <=
+    assert // max_seats exceeds the ceiling
+    // smart_contracts/escrow/contract.py:298
+    // assert commit_hash == zero_hash, "quorum must not carry a commit_hash"
+    dig 5
+    ==
+    assert // quorum must not carry a commit_hash
+    // smart_contracts/escrow/contract.py:299
+    // assert verifier == Global.zero_address, "quorum release is permissionless"
+    dig 6
+    global ZeroAddress
+    ==
+    assert // quorum release is permissionless
+    b create_agreement_after_if_else@4
+
+
+// smart_contracts.escrow.contract.Escrow.join[routing]() -> void:
+join:
+    intc_1 // 0
+    pushbytes ""
+    dup
+    // smart_contracts/escrow/contract.py:390
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    cover 2
+    // smart_contracts/escrow/contract.py:392
+    // assert self.paused.value == 0, "contract is paused"
+    intc_1 // 0
+    bytec 4 // "paused"
+    app_global_get_ex
+    assert // check self.paused exists
+    !
+    assert // contract is paused
+    // smart_contracts/escrow/contract.py:394-396
+    // # Checked before dereferencing, so a self-referencing index fails on
+    // # this assertion rather than on a field read from the wrong txn type.
+    // assert payment_index != Txn.group_index, (
+    dup
+    txn GroupIndex
+    !=
+    // smart_contracts/escrow/contract.py:394-398
+    // # Checked before dereferencing, so a self-referencing index fails on
+    // # this assertion rather than on a field read from the wrong txn type.
+    // assert payment_index != Txn.group_index, (
+    //     "payment_index must not reference the app call itself"
+    // )
+    assert // payment_index must not reference the app call itself
+    // smart_contracts/escrow/contract.py:400
+    // agreement = self.agreements[agreement_id].copy()
+    swap
+    itob
+    dup
+    cover 2
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    cover 4
+    box_get
+    swap
+    dup
+    cover 2
+    cover 5
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:401
+    // assert agreement.state == arc4.UInt8(STATE_OPEN), "agreement is not open"
+    dup
+    extract 1 1
+    pushbytes 0x00
+    b==
+    assert // agreement is not open
+    // smart_contracts/escrow/contract.py:402
+    // assert Global.latest_timestamp < agreement.deadline.native, "deadline passed"
+    global LatestTimestamp
+    dig 1
+    pushint 2
+    extract_uint64
+    <
+    assert // deadline passed
+    // smart_contracts/escrow/contract.py:404
+    // seats = agreement.seats.native
+    dup
+    extract 22 2
+    cover 4
+    dup
+    pushint 22
+    extract_uint16
+    dup
+    cover 2
+    cover 3
+    // smart_contracts/escrow/contract.py:405
+    // assert seats < agreement.max_seats.native, "agreement is full"
+    dup
+    pushint 20
+    extract_uint16
+    uncover 2
+    >
+    assert // agreement is full
+    // smart_contracts/escrow/contract.py:407
+    // payment = gtxn.AssetTransferTransaction(payment_index)
+    dig 1
+    gtxns TypeEnum
+    pushint 4 // axfer
+    ==
+    assert // transaction type is axfer
+    // smart_contracts/escrow/contract.py:408
+    // assert payment.xfer_asset.id == self.usdc_asset_id.value, "wrong asset"
+    dig 1
+    gtxns XferAsset
+    intc_1 // 0
+    bytec_3 // "usdc_asset_id"
+    app_global_get_ex
+    assert // check self.usdc_asset_id exists
+    ==
+    assert // wrong asset
+    // smart_contracts/escrow/contract.py:409
+    // assert payment.asset_receiver == Global.current_application_address, (
+    dig 1
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/escrow/contract.py:409-411
+    // assert payment.asset_receiver == Global.current_application_address, (
+    //     "payment must be made to this app account"
+    // )
+    assert // payment must be made to this app account
+    // smart_contracts/escrow/contract.py:412
+    // assert payment.sender == Txn.sender, (
+    dig 1
+    gtxns Sender
+    txn Sender
+    ==
+    // smart_contracts/escrow/contract.py:412-414
+    // assert payment.sender == Txn.sender, (
+    //     "referenced payment sender must match the caller"
+    // )
+    assert // referenced payment sender must match the caller
+    // smart_contracts/escrow/contract.py:415
+    // assert payment.asset_amount == agreement.share_price.native, "wrong amount"
+    dig 1
+    gtxns AssetAmount
+    dup
+    cover 6
+    swap
+    pushint 10
+    extract_uint64
+    ==
+    assert // wrong amount
+    // smart_contracts/escrow/contract.py:416
+    // assert payment.asset_close_to == Global.zero_address, (
+    dup
+    gtxns AssetCloseTo
+    global ZeroAddress
+    ==
+    // smart_contracts/escrow/contract.py:416-418
+    // assert payment.asset_close_to == Global.zero_address, (
+    //     "asset_close_to must be unset"
+    // )
+    assert // asset_close_to must be unset
+    // smart_contracts/escrow/contract.py:419
+    // assert payment.rekey_to == Global.zero_address, "rekey_to must be unset"
+    gtxns RekeyTo
+    global ZeroAddress
+    ==
+    assert // rekey_to must be unset
+    // smart_contracts/escrow/contract.py:421-440
+    // # One transfer funds one seat. The sender check above pins the payment
+    // # to this caller, but one caller can sign two joins in the same group
+    // # and point both at the same transfer -- same sender, same amount
+    // # whenever the two agreements are priced alike, and neither roster
+    // # sees the other. Conservation (spec 7) needs the group checked too.
+    // #
+    // # Only earlier transactions are scanned. A duplicated reference always
+    // # has a later member, and rejecting that one rejects the whole group,
+    // # so scanning backwards is sufficient as well as cheaper: an ordinary
+    // # settlement group puts `join` last and walks two non-app-call legs.
+    // # It also means every call read here has already been evaluated, so
+    // # its arguments are known to have decoded as the ABI types.
+    // #
+    // # The argument count is a lower bound, not an equality. Nothing on
+    // # chain enforces an ARC-4 count: the router dispatches on the selector
+    // # and reads the declared arguments by index, so a call padded with a
+    // # fourth argument is an ordinary join that takes an ordinary seat.
+    // # Keying on an exact count would let eight bytes of padding hide such
+    // # a join from this scan. Three is what the two reads below need.
+    // for index in urange(Txn.group_index):
+    txn GroupIndex
+    cover 3
+    intc_1 // 0
+
+join_for_header@2:
+    // smart_contracts/escrow/contract.py:421-440
+    // # One transfer funds one seat. The sender check above pins the payment
+    // # to this caller, but one caller can sign two joins in the same group
+    // # and point both at the same transfer -- same sender, same amount
+    // # whenever the two agreements are priced alike, and neither roster
+    // # sees the other. Conservation (spec 7) needs the group checked too.
+    // #
+    // # Only earlier transactions are scanned. A duplicated reference always
+    // # has a later member, and rejecting that one rejects the whole group,
+    // # so scanning backwards is sufficient as well as cheaper: an ordinary
+    // # settlement group puts `join` last and walks two non-app-call legs.
+    // # It also means every call read here has already been evaluated, so
+    // # its arguments are known to have decoded as the ABI types.
+    // #
+    // # The argument count is a lower bound, not an equality. Nothing on
+    // # chain enforces an ARC-4 count: the router dispatches on the selector
+    // # and reads the declared arguments by index, so a call padded with a
+    // # fourth argument is an ordinary join that takes an ordinary seat.
+    // # Keying on an exact count would let eight bytes of padding hide such
+    // # a join from this scan. Three is what the two reads below need.
+    // for index in urange(Txn.group_index):
+    dup
+    dig 5
+    <
+    bz join_after_for@11
+    // smart_contracts/escrow/contract.py:441
+    // if gtxn.Transaction(index).type == TransactionType.ApplicationCall:
+    dup
+    gtxns TypeEnum
+    pushint 6 // appl
+    ==
+    dup
+    bury 12
+    bz join_after_if_else@9
+    // smart_contracts/escrow/contract.py:442
+    // call = gtxn.ApplicationCallTransaction(index)
+    dig 10
+    assert // transaction type is appl
+    // smart_contracts/escrow/contract.py:444
+    // call.app_id.id == Global.current_application_id.id
+    dup
+    gtxns ApplicationID
+    global CurrentApplicationID
+    ==
+    // smart_contracts/escrow/contract.py:444-447
+    // call.app_id.id == Global.current_application_id.id
+    // and call.num_app_args >= 3
+    // and call.app_args(0)
+    // == arc4.arc4_signature("join(uint64,uint64)void")
+    bz join_after_if_else@9
+    // smart_contracts/escrow/contract.py:445
+    // and call.num_app_args >= 3
+    dup
+    gtxns NumAppArgs
+    pushint 3
+    >=
+    // smart_contracts/escrow/contract.py:444-447
+    // call.app_id.id == Global.current_application_id.id
+    // and call.num_app_args >= 3
+    // and call.app_args(0)
+    // == arc4.arc4_signature("join(uint64,uint64)void")
+    bz join_after_if_else@9
+    // smart_contracts/escrow/contract.py:446
+    // and call.app_args(0)
+    dup
+    gtxnsa ApplicationArgs 0
+    // smart_contracts/escrow/contract.py:447
+    // == arc4.arc4_signature("join(uint64,uint64)void")
+    bytec 8 // method "join(uint64,uint64)void"
+    // smart_contracts/escrow/contract.py:446-447
+    // and call.app_args(0)
+    // == arc4.arc4_signature("join(uint64,uint64)void")
+    ==
+    // smart_contracts/escrow/contract.py:444-447
+    // call.app_id.id == Global.current_application_id.id
+    // and call.num_app_args >= 3
+    // and call.app_args(0)
+    // == arc4.arc4_signature("join(uint64,uint64)void")
+    bz join_after_if_else@9
+    // smart_contracts/escrow/contract.py:449
+    // assert op.btoi(call.app_args(2)) != payment_index, (
+    dup
+    gtxnsa ApplicationArgs 2
+    btoi
+    dig 4
+    !=
+    // smart_contracts/escrow/contract.py:449-451
+    // assert op.btoi(call.app_args(2)) != payment_index, (
+    //     "payment already referenced by another join"
+    // )
+    assert // payment already referenced by another join
+
+join_after_if_else@9:
+    // smart_contracts/escrow/contract.py:421-440
+    // # One transfer funds one seat. The sender check above pins the payment
+    // # to this caller, but one caller can sign two joins in the same group
+    // # and point both at the same transfer -- same sender, same amount
+    // # whenever the two agreements are priced alike, and neither roster
+    // # sees the other. Conservation (spec 7) needs the group checked too.
+    // #
+    // # Only earlier transactions are scanned. A duplicated reference always
+    // # has a later member, and rejecting that one rejects the whole group,
+    // # so scanning backwards is sufficient as well as cheaper: an ordinary
+    // # settlement group puts `join` last and walks two non-app-call legs.
+    // # It also means every call read here has already been evaluated, so
+    // # its arguments are known to have decoded as the ABI types.
+    // #
+    // # The argument count is a lower bound, not an equality. Nothing on
+    // # chain enforces an ARC-4 count: the router dispatches on the selector
+    // # and reads the declared arguments by index, so a call padded with a
+    // # fourth argument is an ordinary join that takes an ordinary seat.
+    // # Keying on an exact count would let eight bytes of padding hide such
+    // # a join from this scan. Three is what the two reads below need.
+    // for index in urange(Txn.group_index):
+    intc_0 // 1
+    +
+    b join_for_header@2
+
+join_after_for@11:
+    pop
+    // smart_contracts/escrow/contract.py:453-455
+    // # A payer appears on a roster at most once: `quorum`'s public claim is
+    // # N *distinct* payers. The scan walks occupied seats only.
+    // for seat in urange(seats):
+    intc_1 // 0
+
+join_for_header@12:
+    // smart_contracts/escrow/contract.py:453-455
+    // # A payer appears on a roster at most once: `quorum`'s public claim is
+    // # N *distinct* payers. The scan walks occupied seats only.
+    // for seat in urange(seats):
+    dup
+    dig 2
+    <
+    bz join_after_for@15
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    dig 3
+    concat
+    // smart_contracts/escrow/contract.py:360
+    // self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    dig 1
+    pushint 40
+    *
+    intc_3 // 32
+    // smart_contracts/escrow/contract.py:359-361
+    // raw = op.Box.extract(
+    //     self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    // )
+    box_extract
+    // smart_contracts/escrow/contract.py:456
+    // assert self._seat_payer(agreement_id, seat) != Txn.sender, (
+    txn Sender
+    !=
+    // smart_contracts/escrow/contract.py:456-458
+    // assert self._seat_payer(agreement_id, seat) != Txn.sender, (
+    //     "payer already joined this agreement"
+    // )
+    assert // payer already joined this agreement
+    // smart_contracts/escrow/contract.py:453-455
+    // # A payer appears on a roster at most once: `quorum`'s public claim is
+    // # N *distinct* payers. The scan walks occupied seats only.
+    // for seat in urange(seats):
+    intc_0 // 1
+    +
+    b join_for_header@12
+
+join_after_for@15:
+    pop
+    // smart_contracts/escrow/contract.py:460
+    // self._write_seat(agreement_id, seats, Txn.sender, payment.asset_amount)
+    txn Sender
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    uncover 3
+    concat
+    // smart_contracts/escrow/contract.py:377
+    // seat * SEAT_BYTES,
+    dig 2
+    pushint 40
+    *
+    // smart_contracts/escrow/contract.py:378
+    // payer.bytes + op.itob(amount),
+    dig 6
+    dup
+    cover 5
+    itob
+    dup
+    cover 7
+    uncover 3
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:375-379
+    // op.Box.replace(
+    //     self._roster_key(agreement_id),
+    //     seat * SEAT_BYTES,
+    //     payer.bytes + op.itob(amount),
+    // )
+    box_replace
+    // smart_contracts/escrow/contract.py:462
+    // new_seats = seats + UInt64(1)
+    intc_0 // 1
+    +
+    // smart_contracts/escrow/contract.py:463
+    // agreement.seats = arc4.UInt16(new_seats)
+    dup
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    dup
+    bury 14
+    dig 8
+    swap
+    replace2 22
+    // smart_contracts/escrow/contract.py:465
+    // agreement.total_held.native + payment.asset_amount
+    dup
+    pushint 28
+    extract_uint64
+    uncover 3
+    +
+    // smart_contracts/escrow/contract.py:464-466
+    // agreement.total_held = arc4.UInt64(
+    //     agreement.total_held.native + payment.asset_amount
+    // )
+    itob
+    replace2 28
+    dup
+    bury 8
+    // smart_contracts/escrow/contract.py:468-480
+    // # `Filled` means a seat quota was met. It is guarded on the quota
+    // # itself rather than on the condition: a single-seat agreement's
+    // # funding join satisfies the same seat arithmetic while transitioning
+    // # to FUNDED, and emitting on the arithmetic alone would put a
+    // # pool-fill receipt on a delivery escrow's spine, which an indexer
+    // # reads as a quota being met (spec 8). Guarding on
+    // # `condition == quorum` was a proxy for that concern which held only
+    // # while `hash` was single-seat.
+    // #
+    // # The terminal state below still dispatches on the condition, which
+    // # is the one thing that genuinely differs: FILLED releases on the
+    // # seat count, FUNDED only against delivered bytes.
+    // is_quorum = agreement.condition == arc4.UInt8(CONDITION_QUORUM)
+    dup
+    extract 0 1
+    bytec 6 // 0x01
+    b==
+    bury 12
+    // smart_contracts/escrow/contract.py:481
+    // filled = new_seats >= agreement.min_seats.native
+    pushint 18
+    extract_uint16
+    >=
+    dup
+    // smart_contracts/escrow/contract.py:482
+    // if filled:
+    bz join_after_if_else@20
+    // smart_contracts/escrow/contract.py:483
+    // if is_quorum:
+    dig 10
+    bz join_else_body@18
+    // smart_contracts/escrow/contract.py:484
+    // agreement.state = arc4.UInt8(STATE_FILLED)
+    dig 6
+    pushbytes 0x02
+    replace2 1
+    bury 7
+
+join_after_if_else@20:
+    // smart_contracts/escrow/contract.py:488
+    // self.agreements[agreement_id] = agreement.copy()
+    dig 7
+    dig 7
+    box_put
+    // smart_contracts/escrow/contract.py:493
+    // payer=arc4.Address(Txn.sender),
+    txn Sender
+    // smart_contracts/escrow/contract.py:496
+    // payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    uncover 2
+    gtxns TxID
+    pushbytes 0x0020
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:491-498
+    // Joined(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     payer=arc4.Address(Txn.sender),
+    //     amount=arc4.UInt64(payment.asset_amount),
+    //     seat=arc4.UInt16(seats),
+    //     payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    //     provenance=arc4.UInt8(0),
+    // )
+    dig 9
+    uncover 2
+    concat
+    uncover 3
+    concat
+    dig 5
+    concat
+    pushbytes 0x003500
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:490-499
+    // arc4.emit(
+    //     Joined(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         payer=arc4.Address(Txn.sender),
+    //         amount=arc4.UInt64(payment.asset_amount),
+    //         seat=arc4.UInt16(seats),
+    //         payment_txn_id=arc4.DynamicBytes(payment.txn_id),
+    //         provenance=arc4.UInt8(0),
+    //     )
+    // )
+    pushbytes 0x66d68284 // method "Joined(uint64,address,uint64,uint16,byte[],uint8)"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:500
+    // if filled and agreement.min_seats.native > UInt64(1):
+    bz join_after_if_else@23
+    dig 3
+    pushint 18
+    extract_uint16
+    intc_0 // 1
+    >
+    bz join_after_if_else@23
+    // smart_contracts/escrow/contract.py:502-505
+    // Filled(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     seats=arc4.UInt16(new_seats),
+    // )
+    dig 5
+    dig 9
+    concat
+    // smart_contracts/escrow/contract.py:501-506
+    // arc4.emit(
+    //     Filled(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         seats=arc4.UInt16(new_seats),
+    //     )
+    // )
+    pushbytes 0x6b93fd9e // method "Filled(uint64,uint16)"
+    swap
+    concat
+    log
+
+join_after_if_else@23:
+    // smart_contracts/escrow/contract.py:390
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+join_else_body@18:
+    // smart_contracts/escrow/contract.py:486
+    // agreement.state = arc4.UInt8(STATE_FUNDED)
+    dig 6
+    // smart_contracts/escrow/contract.py:468-480
+    // # `Filled` means a seat quota was met. It is guarded on the quota
+    // # itself rather than on the condition: a single-seat agreement's
+    // # funding join satisfies the same seat arithmetic while transitioning
+    // # to FUNDED, and emitting on the arithmetic alone would put a
+    // # pool-fill receipt on a delivery escrow's spine, which an indexer
+    // # reads as a quota being met (spec 8). Guarding on
+    // # `condition == quorum` was a proxy for that concern which held only
+    // # while `hash` was single-seat.
+    // #
+    // # The terminal state below still dispatches on the condition, which
+    // # is the one thing that genuinely differs: FILLED releases on the
+    // # seat count, FUNDED only against delivered bytes.
+    // is_quorum = agreement.condition == arc4.UInt8(CONDITION_QUORUM)
+    bytec 6 // 0x01
+    // smart_contracts/escrow/contract.py:486
+    // agreement.state = arc4.UInt8(STATE_FUNDED)
+    replace2 1
+    bury 7
+    b join_after_if_else@20
+
+
+// smart_contracts.escrow.contract.Escrow.release_hash[routing]() -> void:
+release_hash:
+    // smart_contracts/escrow/contract.py:525
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    dup
+    btoi
+    txna ApplicationArgs 2
+    dup
+    intc_1 // 0
+    extract_uint16 // on error: invalid array length header
+    pushint 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    dup
+    extract 2 0
+    // smart_contracts/escrow/contract.py:527
+    // agreement = self.agreements[agreement_id].copy()
+    uncover 2
+    itob
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    box_get
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:528
+    // assert agreement.state == arc4.UInt8(STATE_FUNDED), "agreement is not funded"
+    dup
+    extract 1 1
+    bytec 6 // 0x01
+    b==
+    assert // agreement is not funded
+    // smart_contracts/escrow/contract.py:529
+    // assert Txn.sender == agreement.verifier.native, "sender must be the verifier"
+    txn Sender
+    dig 1
+    extract 100 32
+    ==
+    assert // sender must be the verifier
+    // smart_contracts/escrow/contract.py:530-531
+    // # Guards against a late release racing a refund.
+    // assert Global.latest_timestamp < agreement.deadline.native, "deadline passed"
+    global LatestTimestamp
+    dig 1
+    pushint 2
+    extract_uint64
+    <
+    assert // deadline passed
+    // smart_contracts/escrow/contract.py:532-534
+    // # A record, not a proof: the chain compares two 32-byte values and the
+    // # real verification happens off-chain. See spec 5.2.
+    // assert delivered_bytes_hash == agreement.commit_hash.bytes, "hash mismatch"
+    dup
+    extract 36 32
+    uncover 3
+    ==
+    assert // hash mismatch
+    // smart_contracts/escrow/contract.py:536
+    // amount = agreement.total_held.native
+    dup
+    extract 28 8
+    dig 1
+    pushint 28
+    extract_uint64
+    // smart_contracts/escrow/contract.py:537
+    // self._pay(agreement.beneficiary.native, amount)
+    dig 2
+    extract 68 32
+    swap
+    callsub _pay
+    // smart_contracts/escrow/contract.py:539
+    // agreement.total_held = arc4.UInt64(0)
+    intc_1 // 0
+    itob
+    uncover 2
+    swap
+    replace2 28
+    // smart_contracts/escrow/contract.py:540
+    // agreement.state = arc4.UInt8(STATE_RELEASED)
+    pushbytes 0x03
+    replace2 1
+    // smart_contracts/escrow/contract.py:541
+    // self.agreements[agreement_id] = agreement.copy()
+    uncover 2
+    dig 1
+    box_put
+    // smart_contracts/escrow/contract.py:546
+    // beneficiary=agreement.beneficiary,
+    extract 68 32
+    // smart_contracts/escrow/contract.py:544-549
+    // Released(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     beneficiary=agreement.beneficiary,
+    //     amount=arc4.UInt64(amount),
+    //     proof=arc4.DynamicBytes(delivered_bytes_hash),
+    // )
+    uncover 3
+    swap
+    concat
+    swap
+    concat
+    pushbytes 0x0032
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:543-550
+    // arc4.emit(
+    //     Released(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         beneficiary=agreement.beneficiary,
+    //         amount=arc4.UInt64(amount),
+    //         proof=arc4.DynamicBytes(delivered_bytes_hash),
+    //     )
+    // )
+    bytec 9 // method "Released(uint64,address,uint64,byte[])"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:525
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow.release_quorum[routing]() -> void:
+release_quorum:
+    // smart_contracts/escrow/contract.py:552
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    dup
+    btoi
+    // smart_contracts/escrow/contract.py:560
+    // agreement = self.agreements[agreement_id].copy()
+    itob
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    box_get
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:561
+    // assert agreement.state == arc4.UInt8(STATE_FILLED), "agreement is not filled"
+    dup
+    extract 1 1
+    pushbytes 0x02
+    b==
+    assert // agreement is not filled
+    // smart_contracts/escrow/contract.py:563
+    // amount = agreement.total_held.native
+    dup
+    extract 28 8
+    dig 1
+    pushint 28
+    extract_uint64
+    // smart_contracts/escrow/contract.py:564
+    // self._pay(agreement.beneficiary.native, amount)
+    dig 2
+    extract 68 32
+    swap
+    callsub _pay
+    // smart_contracts/escrow/contract.py:566
+    // agreement.total_held = arc4.UInt64(0)
+    intc_1 // 0
+    itob
+    uncover 2
+    swap
+    replace2 28
+    // smart_contracts/escrow/contract.py:567
+    // agreement.state = arc4.UInt8(STATE_RELEASED)
+    pushbytes 0x03
+    replace2 1
+    // smart_contracts/escrow/contract.py:568
+    // self.agreements[agreement_id] = agreement.copy()
+    uncover 2
+    dig 1
+    box_put
+    // smart_contracts/escrow/contract.py:573
+    // beneficiary=agreement.beneficiary,
+    extract 68 32
+    // smart_contracts/escrow/contract.py:571-576
+    // Released(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     beneficiary=agreement.beneficiary,
+    //     amount=arc4.UInt64(amount),
+    //     proof=arc4.DynamicBytes(b""),
+    // )
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    pushbytes 0x00320000
+    concat
+    // smart_contracts/escrow/contract.py:570-577
+    // arc4.emit(
+    //     Released(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         beneficiary=agreement.beneficiary,
+    //         amount=arc4.UInt64(amount),
+    //         proof=arc4.DynamicBytes(b""),
+    //     )
+    // )
+    bytec 9 // method "Released(uint64,address,uint64,byte[])"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:552
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow.expire[routing]() -> void:
+expire:
+    pushbytes ""
+    dup
+    // smart_contracts/escrow/contract.py:579
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/escrow/contract.py:581
+    // agreement = self.agreements[agreement_id].copy()
+    itob
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    box_get
+    swap
+    dup
+    uncover 2
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:596
+    // agreement.seats.native == UInt64(0)
+    pushint 22
+    extract_uint16
+    // smart_contracts/escrow/contract.py:596-597
+    // agreement.seats.native == UInt64(0)
+    // and Txn.sender == agreement.creator.native
+    bnz expire_bool_false@4
+    // smart_contracts/escrow/contract.py:597
+    // and Txn.sender == agreement.creator.native
+    txn Sender
+    dig 1
+    extract 132 32
+    ==
+    // smart_contracts/escrow/contract.py:596-597
+    // agreement.seats.native == UInt64(0)
+    // and Txn.sender == agreement.creator.native
+    bz expire_bool_false@4
+    intc_0 // 1
+
+expire_bool_merge@5:
+    // smart_contracts/escrow/contract.py:599
+    // if not unfunded_reclaim:
+    bnz expire_after_if_else@7
+    // smart_contracts/escrow/contract.py:600
+    // assert Global.latest_timestamp >= agreement.deadline.native, (
+    global LatestTimestamp
+    dig 1
+    pushint 2
+    extract_uint64
+    >=
+    // smart_contracts/escrow/contract.py:600-602
+    // assert Global.latest_timestamp >= agreement.deadline.native, (
+    //     "deadline has not passed"
+    // )
+    assert // deadline has not passed
+
+expire_after_if_else@7:
+    // smart_contracts/escrow/contract.py:604
+    // state = agreement.state.native
+    dup
+    intc_0 // 1
+    getbyte
+    dup
+    bury 5
+    // smart_contracts/escrow/contract.py:605
+    // reason = UInt64(0)
+    intc_1 // 0
+    bury 6
+    // smart_contracts/escrow/contract.py:607
+    // if state == UInt64(STATE_FILLED):
+    pushint 2
+    ==
+    bz expire_else_body@9
+    // smart_contracts/escrow/contract.py:615
+    // agreement.beneficiary.native, Asset(self.usdc_asset_id.value)
+    dup
+    extract 68 32
+    intc_1 // 0
+    bytec_3 // "usdc_asset_id"
+    app_global_get_ex
+    assert // check self.usdc_asset_id exists
+    // smart_contracts/escrow/contract.py:608-616
+    // # The stranded-beneficiary rescue. A FILLED agreement never
+    // # expires on the clock alone -- otherwise `release_quorum` and
+    // # `expire` would both be callable and the outcome would depend on
+    // # transaction ordering. It expires only when the beneficiary can
+    // # no longer receive, which is mutually exclusive with a release
+    // # succeeding, so exactly one of the two can pass at any moment.
+    // assert not self._can_receive(
+    //     agreement.beneficiary.native, Asset(self.usdc_asset_id.value)
+    // ), "beneficiary can still receive; release_quorum applies"
+    callsub _can_receive
+    !
+    assert // beneficiary can still receive; release_quorum applies
+    // smart_contracts/escrow/contract.py:617
+    // reason = UInt64(1)
+    intc_0 // 1
+    bury 5
+
+expire_after_if_else@14:
+    // smart_contracts/escrow/contract.py:623
+    // agreement.state = arc4.UInt8(STATE_EXPIRED)
+    pushbytes 0x04
+    replace2 1
+    // smart_contracts/escrow/contract.py:623-624
+    // agreement.state = arc4.UInt8(STATE_EXPIRED)
+    // self.agreements[agreement_id] = agreement.copy()
+    swap
+    intc_0 // 1
+    // smart_contracts/escrow/contract.py:623
+    // agreement.state = arc4.UInt8(STATE_EXPIRED)
+    pushbytes 0x04
+    // smart_contracts/escrow/contract.py:623-624
+    // agreement.state = arc4.UInt8(STATE_EXPIRED)
+    // self.agreements[agreement_id] = agreement.copy()
+    box_replace // on error: index out of bounds
+    // smart_contracts/escrow/contract.py:629
+    // seats=agreement.seats,
+    extract 22 2
+    // smart_contracts/escrow/contract.py:630
+    // reason=arc4.UInt8(reason),
+    dig 3
+    itob
+    dup
+    bitlen
+    intc_2 // 8
+    <=
+    assert // overflow
+    extract 7 1
+    // smart_contracts/escrow/contract.py:627-631
+    // Expired(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     seats=agreement.seats,
+    //     reason=arc4.UInt8(reason),
+    // )
+    cover 2
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:626-632
+    // arc4.emit(
+    //     Expired(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         seats=agreement.seats,
+    //         reason=arc4.UInt8(reason),
+    //     )
+    // )
+    pushbytes 0xb6b68179 // method "Expired(uint64,uint16,uint8)"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:579
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+expire_else_body@9:
+    // smart_contracts/escrow/contract.py:619
+    // assert state == UInt64(STATE_OPEN) or state == UInt64(STATE_FUNDED), (
+    dig 3
+    bz expire_bool_true@11
+    dig 3
+    intc_0 // 1
+    ==
+    bz expire_bool_false@12
+
+expire_bool_true@11:
+    intc_0 // 1
+
+expire_bool_merge@13:
+    // smart_contracts/escrow/contract.py:619-621
+    // assert state == UInt64(STATE_OPEN) or state == UInt64(STATE_FUNDED), (
+    //     "agreement cannot expire from this state"
+    // )
+    assert // agreement cannot expire from this state
+    b expire_after_if_else@14
+
+expire_bool_false@12:
+    intc_1 // 0
+    b expire_bool_merge@13
+
+expire_bool_false@4:
+    intc_1 // 0
+    b expire_bool_merge@5
+
+
+// smart_contracts.escrow.contract.Escrow.refund_next[routing]() -> void:
+refund_next:
+    intc_1 // 0
+    pushbytes ""
+    dupn 5
+    // smart_contracts/escrow/contract.py:634
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    cover 3
+    // smart_contracts/escrow/contract.py:644
+    // assert count > 0, "count must be positive"
+    dup
+    assert // count must be positive
+    // smart_contracts/escrow/contract.py:645
+    // assert count <= REFUND_BATCH_CEILING, "count exceeds the per-call ceiling"
+    pushint 4
+    <=
+    assert // count exceeds the per-call ceiling
+    // smart_contracts/escrow/contract.py:647
+    // agreement = self.agreements[agreement_id].copy()
+    itob
+    dup
+    cover 3
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    cover 3
+    box_get
+    swap
+    dup
+    uncover 2
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:648
+    // state = agreement.state.native
+    intc_0 // 1
+    getbyte
+    dup
+    cover 4
+    // smart_contracts/escrow/contract.py:649
+    // assert state == UInt64(STATE_EXPIRED) or state == UInt64(STATE_REFUNDING), (
+    pushint 4
+    ==
+    bnz refund_next_bool_true@3
+    dig 3
+    pushint 5
+    ==
+    bz refund_next_bool_false@4
+
+refund_next_bool_true@3:
+    intc_0 // 1
+
+refund_next_bool_merge@5:
+    // smart_contracts/escrow/contract.py:649-651
+    // assert state == UInt64(STATE_EXPIRED) or state == UInt64(STATE_REFUNDING), (
+    //     "agreement is not refunding"
+    // )
+    assert // agreement is not refunding
+    // smart_contracts/escrow/contract.py:653
+    // cursor = agreement.refund_cursor.native
+    dupn 2
+    pushint 24
+    extract_uint16
+    dup
+    cover 2
+    cover 3
+    // smart_contracts/escrow/contract.py:654
+    // seats = agreement.seats.native
+    pushint 22
+    extract_uint16
+    dup
+    cover 2
+    bury 14
+    // smart_contracts/escrow/contract.py:655
+    // last = cursor + count
+    uncover 5
+    +
+    dup
+    bury 14
+    // smart_contracts/escrow/contract.py:656
+    // if last > seats:
+    <
+    bz refund_next_after_if_else@7
+    dig 10
+    bury 12
+
+refund_next_after_if_else@7:
+    // smart_contracts/escrow/contract.py:659
+    // usdc = Asset(self.usdc_asset_id.value)
+    intc_1 // 0
+    bytec_3 // "usdc_asset_id"
+    app_global_get_ex
+    swap
+    bury 9
+    assert // check self.usdc_asset_id exists
+    // smart_contracts/escrow/contract.py:660
+    // total_held = agreement.total_held.native
+    dupn 2
+    pushint 28
+    extract_uint64
+    cover 2
+    // smart_contracts/escrow/contract.py:661
+    // unclaimed = agreement.unclaimed_seats.native
+    pushint 26
+    extract_uint16
+    bury 10
+    uncover 2
+    swap
+
+refund_next_for_header@8:
+    // smart_contracts/escrow/contract.py:663
+    // for seat in urange(cursor, last):
+    dig 1
+    dig 13
+    <
+    bz refund_next_after_for@16
+    // smart_contracts/escrow/contract.py:664
+    // amount = self._seat_amount(agreement_id, seat)
+    dig 3
+    dig 2
+    callsub _seat_amount
+    dup
+    bury 15
+    // smart_contracts/escrow/contract.py:665
+    // if amount > 0:
+    bz refund_next_after_if_else@14
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    dig 7
+    concat
+    // smart_contracts/escrow/contract.py:360
+    // self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    dig 2
+    pushint 40
+    *
+    intc_3 // 32
+    // smart_contracts/escrow/contract.py:359-361
+    // raw = op.Box.extract(
+    //     self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    // )
+    box_extract
+    dup
+    // smart_contracts/escrow/contract.py:667
+    // if self._can_receive(payer, usdc):
+    dig 10
+    callsub _can_receive
+    bz refund_next_else_body@12
+    // smart_contracts/escrow/contract.py:668
+    // self._pay(payer, amount)
+    dup
+    dig 15
+    dup
+    cover 2
+    callsub _pay
+    // smart_contracts/escrow/contract.py:669
+    // self._zero_seat_amount(agreement_id, seat)
+    dig 5
+    dig 4
+    dup
+    cover 3
+    callsub _zero_seat_amount
+    // smart_contracts/escrow/contract.py:670
+    // total_held = total_held - amount
+    uncover 5
+    dig 1
+    -
+    cover 5
+    // smart_contracts/escrow/contract.py:675
+    // amount=arc4.UInt64(amount),
+    itob
+    // smart_contracts/escrow/contract.py:676
+    // seat=arc4.UInt16(seat),
+    swap
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:672-677
+    // Refunded(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     payer=arc4.Address(payer),
+    //     amount=arc4.UInt64(amount),
+    //     seat=arc4.UInt16(seat),
+    // )
+    dig 10
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:671-678
+    // arc4.emit(
+    //     Refunded(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         payer=arc4.Address(payer),
+    //         amount=arc4.UInt64(amount),
+    //         seat=arc4.UInt16(seat),
+    //     )
+    // )
+    pushbytes 0xd2ee1308 // method "Refunded(uint64,address,uint64,uint16)"
+    swap
+    concat
+    log
+
+refund_next_after_if_else@14:
+    // smart_contracts/escrow/contract.py:663
+    // for seat in urange(cursor, last):
+    swap
+    intc_0 // 1
+    +
+    swap
+    b refund_next_for_header@8
+
+refund_next_else_body@12:
+    // smart_contracts/escrow/contract.py:680-683
+    // # Leave the amount intact so `claim_refund` can still pay
+    // # it. Without this check one dead wallet would abort every
+    // # call that reaches its seat, freezing every seat behind it.
+    // unclaimed = unclaimed + UInt64(1)
+    dig 10
+    intc_0 // 1
+    +
+    bury 11
+    // smart_contracts/escrow/contract.py:688
+    // amount=arc4.UInt64(amount),
+    dig 14
+    itob
+    // smart_contracts/escrow/contract.py:689
+    // seat=arc4.UInt16(seat),
+    dig 3
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:685-690
+    // RefundSkipped(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     payer=arc4.Address(payer),
+    //     amount=arc4.UInt64(amount),
+    //     seat=arc4.UInt16(seat),
+    // )
+    dig 10
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:684-691
+    // arc4.emit(
+    //     RefundSkipped(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         payer=arc4.Address(payer),
+    //         amount=arc4.UInt64(amount),
+    //         seat=arc4.UInt16(seat),
+    //     )
+    // )
+    pushbytes 0xffe09d1d // method "RefundSkipped(uint64,address,uint64,uint16)"
+    swap
+    concat
+    log
+    b refund_next_after_if_else@14
+
+refund_next_after_for@16:
+    bury 1
+    uncover 2
+    pop
+    // smart_contracts/escrow/contract.py:693
+    // agreement.refund_cursor = arc4.UInt16(last)
+    dig 10
+    dup
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    uncover 2
+    swap
+    replace2 24
+    // smart_contracts/escrow/contract.py:694
+    // agreement.total_held = arc4.UInt64(total_held)
+    uncover 2
+    itob
+    replace2 28
+    // smart_contracts/escrow/contract.py:695
+    // agreement.unclaimed_seats = arc4.UInt16(unclaimed)
+    dig 7
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    dup
+    bury 14
+    replace2 26
+    swap
+    // smart_contracts/escrow/contract.py:697
+    // if last >= seats:
+    dig 9
+    >=
+    dup
+    bury 9
+    bz refund_next_else_body@18
+    // smart_contracts/escrow/contract.py:698
+    // agreement.state = arc4.UInt8(STATE_REFUNDED)
+    pushbytes 0x06
+    replace2 1
+
+refund_next_after_if_else@19:
+    // smart_contracts/escrow/contract.py:702
+    // self.agreements[agreement_id] = agreement.copy()
+    dig 2
+    swap
+    box_put
+    // smart_contracts/escrow/contract.py:704
+    // if last >= seats:
+    dig 6
+    bz refund_next_after_if_else@21
+    // smart_contracts/escrow/contract.py:724
+    // paid=arc4.UInt16(seats - unclaimed),
+    dig 7
+    dig 6
+    -
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:722-726
+    // RefundComplete(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     paid=arc4.UInt16(seats - unclaimed),
+    //     skipped=arc4.UInt16(unclaimed),
+    // )
+    dig 4
+    swap
+    concat
+    dig 11
+    concat
+    // smart_contracts/escrow/contract.py:705-727
+    // # Totals for the whole sweep, not this call's tally. A pool past
+    // # `REFUND_BATCH_CEILING` seats clears over several `refund_next`
+    // # calls, so per-call counters would report the last batch alone and
+    // # undercount every batch before it -- and `RefundComplete` is the
+    // # terminal receipt an indexer reads for the agreement, not for the
+    // # call (spec 8).
+    // #
+    // # Derived from the record rather than accumulated across calls,
+    // # because `unclaimed_seats` is already the exact count of seats
+    // # still owed at this instant: `share_price > 0` makes every seat
+    // # funded, paying one zeroes its amount, skipping one increments
+    // # `unclaimed_seats`, and `claim_refund` -- which may run between
+    // # batches, and would defeat any counter this method accumulated
+    // # itself -- reverses that increment as it settles the seat. So
+    // # `seats - unclaimed` counts the seats settled by either path and
+    // # `paid + skipped == seats` holds.
+    // arc4.emit(
+    //     RefundComplete(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         paid=arc4.UInt16(seats - unclaimed),
+    //         skipped=arc4.UInt16(unclaimed),
+    //     )
+    // )
+    pushbytes 0x7024fd31 // method "RefundComplete(uint64,uint16,uint16)"
+    swap
+    concat
+    log
+
+refund_next_after_if_else@21:
+    // smart_contracts/escrow/contract.py:634
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+refund_next_else_body@18:
+    // smart_contracts/escrow/contract.py:700
+    // agreement.state = arc4.UInt8(STATE_REFUNDING)
+    pushbytes 0x05
+    replace2 1
+    b refund_next_after_if_else@19
+
+refund_next_bool_false@4:
+    intc_1 // 0
+    b refund_next_bool_merge@5
+
+
+// smart_contracts.escrow.contract.Escrow.claim_refund[routing]() -> void:
+claim_refund:
+    // smart_contracts/escrow/contract.py:729
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    swap
+    // smart_contracts/escrow/contract.py:737
+    // agreement = self.agreements[agreement_id].copy()
+    itob
+    dup
+    cover 2
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    cover 2
+    box_get
+    swap
+    dup
+    uncover 2
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:738
+    // state = agreement.state.native
+    intc_0 // 1
+    getbyte
+    dup
+    cover 7
+    // smart_contracts/escrow/contract.py:740
+    // state == UInt64(STATE_EXPIRED)
+    pushint 4
+    ==
+    // smart_contracts/escrow/contract.py:740-742
+    // state == UInt64(STATE_EXPIRED)
+    // or state == UInt64(STATE_REFUNDING)
+    // or state == UInt64(STATE_REFUNDED)
+    bnz claim_refund_bool_true@4
+    // smart_contracts/escrow/contract.py:741
+    // or state == UInt64(STATE_REFUNDING)
+    dig 6
+    pushint 5
+    ==
+    // smart_contracts/escrow/contract.py:740-742
+    // state == UInt64(STATE_EXPIRED)
+    // or state == UInt64(STATE_REFUNDING)
+    // or state == UInt64(STATE_REFUNDED)
+    bnz claim_refund_bool_true@4
+    // smart_contracts/escrow/contract.py:742
+    // or state == UInt64(STATE_REFUNDED)
+    dig 6
+    pushint 6
+    ==
+    // smart_contracts/escrow/contract.py:740-742
+    // state == UInt64(STATE_EXPIRED)
+    // or state == UInt64(STATE_REFUNDING)
+    // or state == UInt64(STATE_REFUNDED)
+    bz claim_refund_bool_false@5
+
+claim_refund_bool_true@4:
+    intc_0 // 1
+
+claim_refund_bool_merge@6:
+    // smart_contracts/escrow/contract.py:739-743
+    // assert (
+    //     state == UInt64(STATE_EXPIRED)
+    //     or state == UInt64(STATE_REFUNDING)
+    //     or state == UInt64(STATE_REFUNDED)
+    // ), "agreement is not in a refunding state"
+    assert // agreement is not in a refunding state
+    // smart_contracts/escrow/contract.py:744
+    // assert seat < agreement.seats.native, "seat is out of range"
+    dup
+    pushint 22
+    extract_uint16
+    dig 2
+    >
+    assert // seat is out of range
+    // smart_contracts/escrow/contract.py:745-750
+    // # A skipped seat is exactly one the cursor has already passed while
+    // # leaving its amount intact. Seats ahead of the cursor still belong to
+    // # `refund_next`, and accepting one here would decrement
+    // # `unclaimed_seats` for a seat that was never skipped -- cancelling out
+    // # a real skip and stranding that payer permanently (spec 5.4).
+    // assert seat < agreement.refund_cursor.native, "seat has not been skipped yet"
+    dup
+    pushint 24
+    extract_uint16
+    dig 2
+    >
+    assert // seat has not been skipped yet
+    // smart_contracts/escrow/contract.py:752
+    // amount = self._seat_amount(agreement_id, seat)
+    uncover 4
+    dup
+    cover 2
+    dig 3
+    callsub _seat_amount
+    // smart_contracts/escrow/contract.py:753
+    // assert amount > 0, "seat is already settled"
+    dup
+    assert // seat is already settled
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    uncover 6
+    concat
+    // smart_contracts/escrow/contract.py:360
+    // self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    dig 4
+    pushint 40
+    *
+    intc_3 // 32
+    // smart_contracts/escrow/contract.py:359-361
+    // raw = op.Box.extract(
+    //     self._roster_key(agreement_id), seat * SEAT_BYTES, UInt64(32)
+    // )
+    box_extract
+    // smart_contracts/escrow/contract.py:756
+    // self._pay(payer, amount)
+    dup
+    dig 2
+    callsub _pay
+    // smart_contracts/escrow/contract.py:757
+    // self._zero_seat_amount(agreement_id, seat)
+    uncover 3
+    dig 4
+    callsub _zero_seat_amount
+    // smart_contracts/escrow/contract.py:759
+    // agreement.total_held = arc4.UInt64(agreement.total_held.native - amount)
+    dig 2
+    pushint 28
+    extract_uint64
+    dig 2
+    -
+    itob
+    uncover 3
+    swap
+    replace2 28
+    // smart_contracts/escrow/contract.py:761
+    // agreement.unclaimed_seats.native - UInt64(1)
+    dup
+    pushint 26
+    extract_uint16
+    intc_0 // 1
+    -
+    // smart_contracts/escrow/contract.py:760-762
+    // agreement.unclaimed_seats = arc4.UInt16(
+    //     agreement.unclaimed_seats.native - UInt64(1)
+    // )
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    replace2 26
+    // smart_contracts/escrow/contract.py:763
+    // self.agreements[agreement_id] = agreement.copy()
+    uncover 4
+    swap
+    box_put
+    // smart_contracts/escrow/contract.py:769
+    // amount=arc4.UInt64(amount),
+    swap
+    itob
+    // smart_contracts/escrow/contract.py:770
+    // seat=arc4.UInt16(seat),
+    uncover 2
+    itob
+    dup
+    bitlen
+    pushint 16
+    <=
+    assert // overflow
+    extract 6 2
+    // smart_contracts/escrow/contract.py:766-771
+    // RefundClaimed(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     payer=arc4.Address(payer),
+    //     amount=arc4.UInt64(amount),
+    //     seat=arc4.UInt16(seat),
+    // )
+    uncover 3
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:765-772
+    // arc4.emit(
+    //     RefundClaimed(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         payer=arc4.Address(payer),
+    //         amount=arc4.UInt64(amount),
+    //         seat=arc4.UInt16(seat),
+    //     )
+    // )
+    pushbytes 0x41644e3a // method "RefundClaimed(uint64,address,uint64,uint16)"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:729
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+claim_refund_bool_false@5:
+    intc_1 // 0
+    b claim_refund_bool_merge@6
+
+
+// smart_contracts.escrow.contract.Escrow.close[routing]() -> void:
+close:
+    pushbytes ""
+    dupn 2
+    // smart_contracts/escrow/contract.py:774
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/escrow/contract.py:791
+    // agreement = self.agreements[agreement_id].copy()
+    itob
+    dup
+    bytec_0 // "a"
+    swap
+    concat
+    dup
+    box_get
+    swap
+    dup
+    uncover 2
+    assert // check self.agreements entry exists
+    // smart_contracts/escrow/contract.py:792
+    // state = agreement.state.native
+    intc_0 // 1
+    getbyte
+    dup
+    cover 5
+    // smart_contracts/escrow/contract.py:793
+    // assert state == UInt64(STATE_RELEASED) or state == UInt64(STATE_REFUNDED), (
+    pushint 3
+    ==
+    dup
+    bnz close_bool_true@3
+    dig 5
+    pushint 6
+    ==
+    bz close_bool_false@4
+
+close_bool_true@3:
+    intc_0 // 1
+
+close_bool_merge@5:
+    // smart_contracts/escrow/contract.py:793-795
+    // assert state == UInt64(STATE_RELEASED) or state == UInt64(STATE_REFUNDED), (
+    //     "agreement is not in a terminal state"
+    // )
+    assert // agreement is not in a terminal state
+    // smart_contracts/escrow/contract.py:796
+    // assert agreement.unclaimed_seats == arc4.UInt16(0), "seats are still unclaimed"
+    dig 1
+    dup
+    extract 26 2
+    intc_1 // 0
+    itob
+    swap
+    pushbytes 0x0000
+    b==
+    assert // seats are still unclaimed
+    // smart_contracts/escrow/contract.py:797
+    // assert agreement.total_held == arc4.UInt64(0), "agreement still holds USDC"
+    dig 1
+    extract 28 8
+    b==
+    assert // agreement still holds USDC
+    // smart_contracts/escrow/contract.py:799
+    // max_seats = agreement.max_seats.native
+    pushint 20
+    extract_uint16
+    // smart_contracts/escrow/contract.py:801
+    // if state == UInt64(STATE_RELEASED):
+    swap
+    bz close_else_body@7
+    // smart_contracts/escrow/contract.py:802
+    // inner_used = inner_used + UInt64(1)
+    pushint 2
+
+close_after_if_else@8:
+    // smart_contracts/escrow/contract.py:215
+    // return (max_seats + UInt64(1)) * Global.min_txn_fee
+    dig 1
+    intc_0 // 1
+    +
+    global MinTxnFee
+    *
+    dup
+    bury 11
+    // smart_contracts/escrow/contract.py:807
+    // spent = inner_used * Global.min_txn_fee
+    global MinTxnFee
+    uncover 2
+    *
+    dup
+    bury 10
+    // smart_contracts/escrow/contract.py:808
+    // unspent = UInt64(0)
+    intc_1 // 0
+    bury 9
+    // smart_contracts/escrow/contract.py:809
+    // if reserve > spent:
+    >
+    bz close_after_if_else@10
+    // smart_contracts/escrow/contract.py:810
+    // unspent = reserve - spent
+    dig 8
+    dig 8
+    -
+    bury 7
+
+close_after_if_else@10:
+    // smart_contracts/escrow/contract.py:811
+    // refund = self._box_mbr(max_seats) + unspent
+    callsub _box_mbr
+    dig 6
+    +
+    // smart_contracts/escrow/contract.py:813
+    // del self.agreements[agreement_id]
+    uncover 2
+    box_del
+    pop
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    bytec_1 // 0x72
+    uncover 3
+    concat
+    // smart_contracts/escrow/contract.py:814
+    // assert op.Box.delete(self._roster_key(agreement_id)), "roster box missing"
+    box_del
+    assert // roster box missing
+    // smart_contracts/escrow/contract.py:816-820
+    // itxn.Payment(
+    //     receiver=agreement.creator.native,
+    //     amount=refund,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/escrow/contract.py:819
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // smart_contracts/escrow/contract.py:817
+    // receiver=agreement.creator.native,
+    uncover 2
+    extract 132 32
+    dig 2
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/escrow/contract.py:816
+    // itxn.Payment(
+    intc_0 // pay
+    itxn_field TypeEnum
+    itxn_field Fee
+    // smart_contracts/escrow/contract.py:816-820
+    // itxn.Payment(
+    //     receiver=agreement.creator.native,
+    //     amount=refund,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // smart_contracts/escrow/contract.py:825
+    // algo_returned=arc4.UInt64(refund),
+    itob
+    // smart_contracts/escrow/contract.py:823-826
+    // Closed(
+    //     agreement_id=arc4.UInt64(agreement_id),
+    //     algo_returned=arc4.UInt64(refund),
+    // )
+    concat
+    // smart_contracts/escrow/contract.py:822-827
+    // arc4.emit(
+    //     Closed(
+    //         agreement_id=arc4.UInt64(agreement_id),
+    //         algo_returned=arc4.UInt64(refund),
+    //     )
+    // )
+    pushbytes 0x48155b91 // method "Closed(uint64,uint64)"
+    swap
+    concat
+    log
+    // smart_contracts/escrow/contract.py:774
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+close_else_body@7:
+    // smart_contracts/escrow/contract.py:804
+    // inner_used = inner_used + agreement.seats.native
+    dig 1
+    pushint 22
+    extract_uint16
+    // smart_contracts/escrow/contract.py:800
+    // inner_used = UInt64(1)  # the payment this call is about to make
+    intc_0 // 1
+    // smart_contracts/escrow/contract.py:804
+    // inner_used = inner_used + agreement.seats.native
+    +
+    b close_after_if_else@8
+
+close_bool_false@4:
+    intc_1 // 0
+    b close_bool_merge@5
+
+
+// smart_contracts.escrow.contract.Escrow.set_admin[routing]() -> void:
+set_admin:
+    // smart_contracts/escrow/contract.py:829
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/escrow/contract.py:831
+    // assert Txn.sender == self.admin.value, "sender must be admin"
+    txn Sender
+    intc_1 // 0
+    bytec_2 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // sender must be admin
+    // smart_contracts/escrow/contract.py:832
+    // assert new_admin != Global.zero_address, "admin must be set"
+    dup
+    global ZeroAddress
+    !=
+    assert // admin must be set
+    // smart_contracts/escrow/contract.py:833
+    // self.admin.value = new_admin
+    bytec_2 // "admin"
+    swap
+    app_global_put
+    // smart_contracts/escrow/contract.py:829
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow.set_paused[routing]() -> void:
+set_paused:
+    // smart_contracts/escrow/contract.py:835
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/escrow/contract.py:843
+    // assert Txn.sender == self.admin.value, "sender must be admin"
+    txn Sender
+    intc_1 // 0
+    bytec_2 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // sender must be admin
+    // smart_contracts/escrow/contract.py:844
+    // self.paused.value = paused
+    bytec 4 // "paused"
+    swap
+    app_global_put
+    // smart_contracts/escrow/contract.py:835
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// smart_contracts.escrow.contract.Escrow._box_mbr(max_seats: uint64) -> uint64:
+_box_mbr:
+    // smart_contracts/escrow/contract.py:191-192
+    // @subroutine
+    // def _box_mbr(self, max_seats: UInt64) -> UInt64:
+    proto 1 1
+    // smart_contracts/escrow/contract.py:195
+    // BOX_KEY_BYTES + SEAT_BYTES * max_seats
+    pushint 40
+    frame_dig -1
+    *
+    pushint 9
+    +
+    // smart_contracts/escrow/contract.py:194
+    // roster_mbr = UInt64(BOX_FLAT_MBR) + BOX_BYTE_MBR * (
+    pushint 400
+    // smart_contracts/escrow/contract.py:194-196
+    // roster_mbr = UInt64(BOX_FLAT_MBR) + BOX_BYTE_MBR * (
+    //     BOX_KEY_BYTES + SEAT_BYTES * max_seats
+    // )
+    *
+    // smart_contracts/escrow/contract.py:194-197
+    // roster_mbr = UInt64(BOX_FLAT_MBR) + BOX_BYTE_MBR * (
+    //     BOX_KEY_BYTES + SEAT_BYTES * max_seats
+    // )
+    // return UInt64(AGREEMENT_BOX_MBR) + roster_mbr
+    pushint 74200
+    +
+    // smart_contracts/escrow/contract.py:197
+    // return UInt64(AGREEMENT_BOX_MBR) + roster_mbr
+    retsub
+
+
+// smart_contracts.escrow.contract.Escrow._can_receive(account: bytes, asset: uint64) -> uint64:
+_can_receive:
+    // smart_contracts/escrow/contract.py:222-223
+    // @subroutine
+    // def _can_receive(self, account: Account, asset: Asset) -> bool:
+    proto 2 1
+    // smart_contracts/escrow/contract.py:234
+    // _balance, opted_in = op.AssetHoldingGet.asset_balance(account, asset)
+    frame_dig -2
+    frame_dig -1
+    asset_holding_get AssetBalance
+    bury 1
+    // smart_contracts/escrow/contract.py:235
+    // frozen, _exists = op.AssetHoldingGet.asset_frozen(account, asset)
+    frame_dig -2
+    frame_dig -1
+    asset_holding_get AssetFrozen
+    pop
+    swap
+    // smart_contracts/escrow/contract.py:236
+    // return opted_in and not frozen
+    bz _can_receive_bool_false@3
+    frame_dig 0
+    bnz _can_receive_bool_false@3
+    intc_0 // 1
+
+_can_receive_bool_merge@4:
+    // smart_contracts/escrow/contract.py:236
+    // return opted_in and not frozen
+    swap
+    retsub
+
+_can_receive_bool_false@3:
+    intc_1 // 0
+    b _can_receive_bool_merge@4
+
+
+// smart_contracts.escrow.contract.Escrow._seat_amount(agreement_id: uint64, seat: uint64) -> uint64:
+_seat_amount:
+    // smart_contracts/escrow/contract.py:364-365
+    // @subroutine
+    // def _seat_amount(self, agreement_id: UInt64, seat: UInt64) -> UInt64:
+    proto 2 1
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    frame_dig -2
+    itob
+    bytec_1 // 0x72
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:367
+    // self._roster_key(agreement_id), seat * SEAT_BYTES + UInt64(32), UInt64(8)
+    frame_dig -1
+    pushint 40
+    *
+    intc_3 // 32
+    +
+    intc_2 // 8
+    // smart_contracts/escrow/contract.py:366-368
+    // raw = op.Box.extract(
+    //     self._roster_key(agreement_id), seat * SEAT_BYTES + UInt64(32), UInt64(8)
+    // )
+    box_extract
+    // smart_contracts/escrow/contract.py:369
+    // return op.btoi(raw)
+    btoi
+    retsub
+
+
+// smart_contracts.escrow.contract.Escrow._zero_seat_amount(agreement_id: uint64, seat: uint64) -> void:
+_zero_seat_amount:
+    // smart_contracts/escrow/contract.py:381-382
+    // @subroutine
+    // def _zero_seat_amount(self, agreement_id: UInt64, seat: UInt64) -> None:
+    proto 2 0
+    // smart_contracts/escrow/contract.py:189
+    // return Bytes(b"r") + op.itob(agreement_id)
+    frame_dig -2
+    itob
+    bytec_1 // 0x72
+    swap
+    concat
+    // smart_contracts/escrow/contract.py:386
+    // seat * SEAT_BYTES + UInt64(32),
+    frame_dig -1
+    pushint 40
+    *
+    intc_3 // 32
+    +
+    // smart_contracts/escrow/contract.py:387
+    // op.itob(UInt64(0)),
+    intc_1 // 0
+    itob
+    // smart_contracts/escrow/contract.py:384-388
+    // op.Box.replace(
+    //     self._roster_key(agreement_id),
+    //     seat * SEAT_BYTES + UInt64(32),
+    //     op.itob(UInt64(0)),
+    // )
+    box_replace
+    retsub
+
+
+// smart_contracts.escrow.contract.Escrow._pay(receiver: bytes, amount: uint64) -> void:
+_pay:
+    // smart_contracts/escrow/contract.py:508-509
+    // @subroutine
+    // def _pay(self, receiver: Account, amount: UInt64) -> None:
+    proto 2 0
+    // smart_contracts/escrow/contract.py:518-523
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asset_id.value,
+    //     asset_receiver=receiver,
+    //     asset_amount=amount,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/escrow/contract.py:522
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // smart_contracts/escrow/contract.py:519
+    // xfer_asset=self.usdc_asset_id.value,
+    intc_1 // 0
+    bytec_3 // "usdc_asset_id"
+    app_global_get_ex
+    assert // check self.usdc_asset_id exists
+    frame_dig -1
+    itxn_field AssetAmount
+    frame_dig -2
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // smart_contracts/escrow/contract.py:518
+    // itxn.AssetTransfer(
+    pushint 4 // axfer
+    itxn_field TypeEnum
+    itxn_field Fee
+    // smart_contracts/escrow/contract.py:518-523
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asset_id.value,
+    //     asset_receiver=receiver,
+    //     asset_amount=amount,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    retsub

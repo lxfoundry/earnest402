@@ -1,0 +1,124 @@
+# ============================================================
+# earnest-x402 .gitignore
+# This repo may become public: anything secret or private must
+# never be committed. When in doubt, add the pattern here first.
+# ============================================================
+
+# --- Secrets & credentials (never commit, no exceptions) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.asc
+*.gpg
+id_rsa*
+id_ed25519*
+*.keystore
+secrets/
+credentials/
+*credentials*.json
+*secret*
+!*secret*.example
+
+# --- Wallets, mnemonics, Algorand key material ---
+*.mnemonic
+*mnemonic*
+*.wallet
+wallets/
+*.partkey
+*.rootkey
+kmd-*/
+**/kmd/
+sandbox/
+.sandbox/
+*.teal.tok
+
+# --- AlgoKit / localnet state ---
+.algokit/
+.localnet/
+genesis.json
+node.log
+algod.token
+algod.admin.token
+kmd.token
+
+# --- Private working notes (strategy lives in the parent repo, not here) ---
+notes/
+scratch/
+private/
+*.private.md
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/*.local.*
+
+# --- Agent skill scratch (brainstorm mockups, subagent-driven-development workspaces) ---
+.superpowers/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Local run output ---
+# Nothing written under out/ is ever committed. An edition's public files are
+# committed under editions/ deliberately; the full edition is delivered as a
+# CID and must never land in the tree.
+out/
+
+# --- Node (API / agents tooling) ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npmrc
+
+# --- Test & runtime output ---
+*.log
+logs/
+tmp/
+.tmp/
+*.sqlite
+# The job store's own default is jobs.sqlite3, which the pattern above does
+# not match. It holds buyers' job records.
+*.sqlite3
+*.db
+test-results/
+.cache/
+
+# --- Editors & OS ---
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*~
+
+# --- Local deployment state (MainNet/TestNet run artifacts) ---
+deploy-state.local.json
+*.deploy.local.*
+
+# --- VibeKit local state ---
+.vibekit/
+
+# web/ dependencies and build output
+web/node_modules/
+web/dist/
+# `tsc -b` incremental state -- a build artefact, not a source.
+web/*.tsbuildinfo
