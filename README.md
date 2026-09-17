@@ -3,12 +3,55 @@
 **"If this, then pay" for x402.** Earnest holds the payment on Algorand until the condition is met:
 enough buyers joined to fund a purchase together, or the deliverable matches what was promised.
 
-Underneath is an Algorand escrow app holding a standard `exact` USDC payment against a deadline and
-a release condition. It is running now at **[earnest.lxfoundry.ai](https://earnest.lxfoundry.ai)**,
-where a co-funded purchase is open: buyers each pay for a seat, and nobody's money moves unless
-enough of them join.
+**Nobody pays unless enough do.**
+
+Its first MainNet pool uses both conditions. 5 buyers must join, and what was promised is a file
+whose sha256 was written on chain when the pool was created, before anyone could pay:
+
+```
+7ff9c6cc101dc4c53d6638f802fb3cd3e976339164194e45c0d804136eb0ddd9
+```
+
+## The file: edition 1 of the Algorand x402 Route Index
+
+On 16 Sep we called, unpaid, all 1,841 endpoints the facilitator's directory lists for USDC on
+Algorand:
+
+- 1,580 asked for payment, 148 answered without a 402, 113 were unreachable
+- of 1,578 with both a listed and a live price, 450 differ, 211 by 10× or more
+
+Free report, aggregates only:
+**<https://earnest.lxfoundry.ai/app/editions/edition-1-sample.html>**
+
+A seat buys the full edition, naming every endpoint and its payee, in 3 formats: HTML to read, CSV
+to analyse, JSON for agents. The sha256 is the JSON's. **Condition: 5 distinct buyers must join
+before the deadline.** If the pool doesn't fill, or we don't release by then, the edition is not
+published and every seat is refunded on chain to the wallet that paid.
+
+## How the pool works
+
+- 5 USDC a seat. Closes **Thu 24 Sep 2026, 18:30 UTC**
+- Your payment settles into the escrow app, not our wallet. It reaches us only through a release
+  that presents that sha256, and that transaction carries the IPFS link, so you can hash what you
+  get
+- We run the refunds; anyone can send them from the pool page
+- Once this pool is released or expires, the next opens on a freshly probed edition, funded by its
+  own pool
 
 **Objectively verifiable conditions only: no arbitration, no human in the loop.**
+
+**Buy a seat: <https://earnest.lxfoundry.ai/app/>**
+
+You need an Algorand wallet with 5 USDC (tested with Pera); the facilitator pays the network fee.
+It's new, so if anything breaks or reads wrong, say so: [open an
+issue](https://github.com/lxfoundry/earnest402/issues), or reply wherever you found this.
+
+---
+
+The rest of this page is the machinery, and the code that runs it.
+
+Underneath is an Algorand escrow app holding a standard `exact` USDC payment against a deadline and
+a release condition.
 
 ## The two release conditions
 
