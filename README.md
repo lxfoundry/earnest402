@@ -1,7 +1,7 @@
 # Earnest
 
 **"If this, then pay" for x402.** Earnest holds the payment on Algorand until the condition is met:
-enough buyers joined to fund a purchase together, or the deliverable matches what was promised.
+enough buyers joined to fund a purchase together, the deliverable matches what was promised, or both.
 
 **Nobody pays unless enough do.**
 
