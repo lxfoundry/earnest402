@@ -1,0 +1,43 @@
+# Patterns here are rooted at the build context: `node_modules` alone would
+# match only a top-level directory, so anything that can appear below the
+# root is written with `**/`.
+
+# Secrets and local state. Never in an image, and never in the context a
+# remote builder receives. This also keeps a local web/.env out of the client
+# build, which must take its values from build arguments alone.
+**/.env
+**/.env.*
+**/*.sqlite3
+
+# Environments, dependencies and caches, all rebuilt inside the image.
+**/.venv/
+**/venv/
+**/node_modules/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.ruff_cache/
+
+# The client is built inside the image from its sources; a local build or its
+# incremental state must not stand in for that.
+web/dist/
+web/*.tsbuildinfo
+
+# Not part of the served application.
+.git
+.github/
+.claude/
+contracts/
+tests/
+agents/
+docs/
+notes/
+
+# Each edition's free tier is served under /app/editions/, so it enters the
+# context -- by name, and nothing else in that directory. editions/README.md
+# tells a seat holder to put the dataset they bought there to hash it, and a
+# deploy sends the working tree, not the commit.
+editions/*
+!editions/edition-*-sample.html
+!editions/edition-*-sample.json
+!editions/edition-*-manifest.json

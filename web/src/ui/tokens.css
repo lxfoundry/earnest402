@@ -1,0 +1,141 @@
+/*
+ * Earnest design tokens: ink on warm paper, with one colour for each outcome an agreement can reach.
+ * An agreement that is still held has no colour of its own; it is drawn in ink.
+ *
+ * Every text colour clears WCAG AA (4.5:1) against both --paper and --card, in both themes.
+ * The theme follows the OS preference, and data-theme="light" | "dark" on <html> overrides it.
+ *
+ * Fonts, loaded by whatever page imports this file:
+ *   https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap
+ */
+
+:root {
+  --paper: #f4efe6;
+  --card: #fbf8f2;
+  --ink: #16140f;
+  --ink-muted: #6b6355;
+  --rule: #d8cfbf;
+  --release: #1f7a4d; /* condition met: the escrow paid the beneficiary */
+  --refund: #b83d0b; /* condition missed or deadline passed: the payer was refunded */
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-text: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  /* Fraunces is variable: set these with the display font, never on body text. */
+  --display-variation: "opsz" 144, "SOFT" 30;
+  --display-weight: 600;
+  --display-tracking: -0.015em;
+
+  --radius: 6px;
+  --rule-width: 1px;
+  --rule-strong: 1.5px solid var(--ink);
+
+  /* The filled button: ink, lettered in paper. */
+  --primary: var(--ink);
+  --on-primary: var(--paper);
+  --primary-hover: color-mix(in srgb, var(--ink) 85%, var(--paper));
+  /* The lift under a card that holds a purchase. */
+  --card-lift: 0 18px 40px -24px rgb(22 20 15 / 0.35);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #15130f;
+    --card: #1d1a15;
+    --ink: #efe8da;
+    --ink-muted: #a39a89;
+    --rule: #3a342a;
+    --release: #52b788;
+    --refund: #f0773a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #15130f;
+  --card: #1d1a15;
+  --ink: #efe8da;
+  --ink-muted: #a39a89;
+  --rule: #3a342a;
+  --release: #52b788;
+  --refund: #f0773a;
+  color-scheme: dark;
+}
+
+/*
+ * The travel line (data-brand="travel" on <html>): white, near-black and one orange, flat, in
+ * IBM Plex Sans throughout. Same tokens, same rule: every text colour clears WCAG AA (4.5:1) on
+ * both --paper and --card, in both themes.
+ *
+ * Two oranges. --accent (#e2553c) is decoration only -- the hero's hook bar, the badge's rule --
+ * because white on it is 3.75:1, short of AA for a button's label. --accent-text (#b8412a) is the
+ * orange that carries words: as text it is 5.5:1 on paper, and a filled button is drawn in it,
+ * lettered in white at 5.5:1. In the dark theme the orange is lightened and the button lettered
+ * in paper instead.
+ *
+ * Measured: ink 18.9 / 17.5, ink-muted 6.9 / 6.4, accent-text 5.5 / 5.1, release 6.1 / 5.7,
+ * refund 6.5 / 6.0 on paper / card; dark: ink 16.7 / 15.2, ink-muted 7.7 / 7.0, accent-text
+ * 7.8 / 7.1, release 8.5 / 7.8, refund 7.8 / 7.1; dark button 6.7.
+ */
+:root[data-brand="travel"] {
+  --paper: #ffffff;
+  --card: #f6f6f4;
+  --ink: #111111;
+  --ink-muted: #5a5a5a;
+  --rule: #e2e2e0;
+  --release: #1f6f4a;
+  --refund: #b3261e;
+  --accent: #e2553c;
+  --accent-text: #b8412a;
+
+  --font-display: var(--font-text);
+  --display-variation: normal;
+  --display-weight: 600;
+  --display-tracking: -0.02em;
+
+  --radius: 8px;
+
+  --primary: var(--accent-text);
+  --on-primary: #ffffff;
+  --primary-hover: #a1381f;
+  /* Flat: no lift. */
+  --card-lift: 0 0 0 transparent;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-brand="travel"]:not([data-theme="light"]) {
+    --paper: #121212;
+    --card: #1c1c1c;
+    --ink: #f2f2f2;
+    --ink-muted: #a6a6a6;
+    --rule: #2e2e2e;
+    --release: #5cc28f;
+    --refund: #f28b82;
+    --accent: #f0765c;
+    --accent-text: #f28b73;
+    --primary: #f0765c;
+    --on-primary: #121212;
+    --primary-hover: #f38c76;
+    color-scheme: dark;
+  }
+}
+
+:root[data-brand="travel"][data-theme="dark"] {
+  --paper: #121212;
+  --card: #1c1c1c;
+  --ink: #f2f2f2;
+  --ink-muted: #a6a6a6;
+  --rule: #2e2e2e;
+  --release: #5cc28f;
+  --refund: #f28b82;
+  --accent: #f0765c;
+  --accent-text: #f28b73;
+  --primary: #f0765c;
+  --on-primary: #121212;
+  --primary-hover: #f38c76;
+  color-scheme: dark;
+}

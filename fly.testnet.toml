@@ -1,0 +1,73 @@
+# Algorand TestNet deployment: the pool route and the browser client.
+#
+#   fly deploy -c fly.testnet.toml --depot=false --remote-only --ha=false
+#
+# Every value in this file is public: addresses, ids and endpoints. The host
+# holds no signing key. POST /pin is off, so the server refuses to boot if
+# ADMIN_MNEMONIC is set: never set it as a secret here.
+#
+# INDEX_AGREEMENT_ID is deliberately absent. It changes with every pool, and it
+# is set only as a secret, which restarts the machine without a rebuild:
+#
+#   fly secrets set INDEX_AGREEMENT_ID=<id> -a earnest-testnet
+#
+# Were it in [env], the next deploy would put back whatever id this file
+# happened to hold. Unset, POST /index answers 503 no_pool_open.
+
+app = "earnest-testnet"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Compiled into the client bundle at build time. Three must agree with [env]
+# below: VITE_NETWORK with NETWORK, VITE_ASSET_ID with USDC_ASA_ID and
+# VITE_APP_ID with APP_ID.
+[build.args]
+  VITE_NETWORK = "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+  VITE_ASSET_ID = "10458941"
+  VITE_APP_ID = "771795120"
+  VITE_FACILITATOR_URL = "https://facilitator.goplausible.xyz"
+  VITE_RESOURCE_HOST = "https://earnest-testnet.lxfoundry.ai"
+  VITE_MAX_FILE_BYTES = "16777216"
+  VITE_ALGOD_URL = "https://testnet-api.4160.nodely.dev"
+  VITE_INDEXER_URL = "https://testnet-idx.4160.nodely.dev"
+  VITE_IPFS_GATEWAY = "https://ipfs.filebase.io"
+
+[env]
+  NETWORK = "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+  USDC_ASA_ID = "10458941"
+  APP_ID = "771795120"
+  APP_ACCOUNT = "CVD7RDNAMB6KPAOS26UEGWOT4MVGFJXRDEIUMOEBPA57FZ7PVVXCKCU5OI"
+  # The facilitator's fee payer, as its /supported endpoint lists it.
+  FEE_PAYER = "ZMFK2OI7ZBD2U27ISERZC4S6LKM6WMFJPZQ4MYNJDZ2VNBNMBA67RA22AA"
+  TREASURY = "QS53S32PVPSB3X34VZ36TCRJL5TPU3AOR3UUZCT3A4EHYUU3KC2Z3REVPU"
+  VERIFIER = "O7ANAF5H3YHJHNQ7HLYP62Z2EDMU2N4C7DZL2CCOHJUFC4CNUFGLD7RRAE"
+  PUBLIC_HOST = "https://earnest-testnet.lxfoundry.ai"
+  ALGOD_URL = "https://testnet-api.4160.nodely.dev"
+  FACILITATOR_URL = "https://facilitator.goplausible.xyz"
+  # A rehearsal-sized pool: small enough to fill and refund by hand.
+  INDEX_SEATS = "2"
+  INDEX_SHARE_PRICE_MICRO = "100000"
+  PIN_ROUTE_ENABLED = "false"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  # A buyer's wallet round trip must not land on a machine that is still
+  # starting, and one that sleeps on idle is unreachable to anything probing it.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/healthz"
+    interval = "30s"
+    timeout = "5s"
+    # Boot reads the application account from algod before it answers.
+    grace_period = "30s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

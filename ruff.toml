@@ -1,0 +1,9 @@
+# The repository-root Python surface: api/, agents/, tests/.
+#
+# contracts/ is a separate dependency surface with its own [tool.ruff] block in
+# contracts/pyproject.toml, its own lock file and its own CI job. It is excluded
+# here so that no file is ever linted under two configurations depending on which
+# directory ruff was invoked from.
+line-length = 88
+target-version = "py312"
+extend-exclude = ["contracts", ".venv"]

@@ -1,0 +1,699 @@
+/*
+ * The client's layout and components, drawn from tokens.css: every colour, font, radius and rule
+ * comes from a token, and this file adds only spacing, type sizes and layout.
+ *
+ * The outcome colours are kept for outcomes. A failure or a warning is drawn in ink, never in
+ * --refund, so that a purchase that did not complete never looks like money coming back.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Type ---- */
+
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: var(--display-variation);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+}
+
+h1 {
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  line-height: 1;
+}
+
+h2 {
+  font-variation-settings: "opsz" 36, "SOFT" 30;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+p,
+dl,
+dd,
+ul {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--ink-muted);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* A hash or a transaction id: broken anywhere, so no part of it scrolls off a phone screen. */
+.hex {
+  overflow-wrap: anywhere;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* Sections space their own children, so no element carries a margin of its own. */
+main section > * + *,
+[role="status"] > * + * {
+  margin-top: 0.75rem;
+}
+
+/* ---- Buttons ---- */
+
+button {
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+  background: transparent;
+  border: var(--rule-width) solid var(--ink-muted);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+button.primary {
+  color: var(--on-primary);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* ---- Shell ---- */
+
+.site {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+main.site {
+  padding-top: 48px;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 20px 0;
+  margin-bottom: 32px;
+  border-bottom: var(--rule-width) solid var(--rule);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.brand,
+.brand picture {
+  display: block;
+}
+
+.brand img {
+  display: block;
+  width: auto;
+  height: 28px;
+}
+
+.connect,
+.wallet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-header button {
+  padding: 7px 12px;
+  font-size: 0.875rem;
+}
+
+.wallet .address {
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+/* The rule mirrors the header's, so the shell is closed at both ends. */
+.site-footer {
+  margin-top: 56px;
+  padding: 20px 0;
+  border-top: var(--rule-width) solid var(--rule);
+}
+
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+  text-decoration-color: var(--rule);
+}
+
+.source-link:hover {
+  color: var(--ink);
+}
+
+.source-link svg {
+  flex: none;
+}
+
+@media (min-width: 720px) {
+  .site {
+    padding: 0 40px 96px;
+  }
+
+  .site-header {
+    padding: 32px 0 24px;
+    margin-bottom: 56px;
+  }
+
+  .site-footer {
+    margin-top: 80px;
+    padding: 24px 0 0;
+  }
+
+  .brand img {
+    height: 36px;
+  }
+}
+
+/* ---- Notices ---- */
+
+[role="status"] {
+  padding: 10px 14px;
+  border-left: 3px solid var(--ink);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+/* ---- Cards: the purchase panel, the receipt, the pool's status ---- */
+
+.panel,
+.receipt,
+.status section {
+  background: var(--card);
+  border: var(--rule-width) solid var(--rule);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.panel,
+.receipt {
+  box-shadow:
+    0 1px 0 var(--rule),
+    var(--card-lift);
+}
+
+/* The panel is already the card: a receipt inside it is drawn flat. */
+.panel .receipt {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.panel > * + * {
+  margin-top: 16px;
+}
+
+.panel button.primary,
+.receipt button.primary {
+  width: 100%;
+}
+
+/* Rendered with nothing in it when a purchase has nothing to say on this screen. */
+main section:empty {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .panel,
+  .receipt,
+  .status section {
+    padding: 24px;
+  }
+}
+
+/* ---- The receipt: what is being bought, read back before anything is signed ---- */
+
+.receipt h2 {
+  padding-bottom: 12px;
+  border-bottom: var(--rule-width) dashed var(--rule);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-variation-settings: normal;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.receipt dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 16px;
+  padding-bottom: 14px;
+  border-bottom: var(--rule-width) dashed var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.receipt dt {
+  color: var(--ink-muted);
+}
+
+.receipt dd code {
+  font-size: inherit;
+}
+
+.receipt > p {
+  font-size: 0.9375rem;
+}
+
+/* The terms repeated inside a receipt sit under a dashed rule, not the page's strong one. */
+.receipt .terms {
+  padding-top: 14px;
+  border-top: var(--rule-width) dashed var(--rule);
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 480px) {
+  .receipt dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .receipt dd + dt {
+    margin-top: 8px;
+  }
+}
+
+/* ---- Entry ---- */
+
+.hero {
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  font-size: clamp(2.75rem, 9vw, 5.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+}
+
+.hero .coin {
+  color: var(--release);
+}
+
+.hero .lede {
+  max-width: 40rem;
+  margin-top: 20px;
+  color: var(--ink-muted);
+  font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  line-height: 1.45;
+}
+
+/* The pool line reads as a statement, not as more lede: full ink where the
+   lede is muted, so it carries without competing with the headline. */
+.hero .pool-line {
+  margin-top: 16px;
+  color: var(--ink);
+  font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.entry-grid,
+.entry-side {
+  display: grid;
+  gap: 40px;
+}
+
+.terms {
+  padding-top: 16px;
+  border-top: var(--rule-strong);
+}
+
+.terms p {
+  max-width: 38rem;
+  color: var(--ink-muted);
+}
+
+.my-seats {
+  padding-top: 16px;
+  border-top: var(--rule-width) solid var(--rule);
+}
+
+.my-seats h2 {
+  font-size: 1.25rem;
+}
+
+.my-seats ul {
+  padding: 0;
+  list-style: none;
+}
+
+.my-seats li + li {
+  margin-top: 4px;
+}
+
+@media (min-width: 720px) {
+  .hero {
+    margin-bottom: 64px;
+  }
+}
+
+@media (min-width: 900px) {
+  .entry-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 25rem);
+    align-items: start;
+    gap: 64px;
+  }
+}
+
+/* ---- Pool ---- */
+
+.pool {
+  max-width: 46rem;
+}
+
+.pool > * + * {
+  margin-top: 24px;
+}
+
+.pool > h1 {
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+}
+
+.status-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-bottom: 14px;
+  border-bottom: var(--rule-width) dashed var(--rule);
+}
+
+.commitment .hex {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.875rem;
+}
+
+.actions .buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---- The stamp: an agreement's outcome, as the brand draws it ---- */
+
+.stamp {
+  display: inline-block;
+  flex: none;
+  padding: 3px 9px 2px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stamp[data-outcome="release"] {
+  color: var(--release);
+  transform: rotate(-3deg);
+}
+
+.stamp[data-outcome="refund"] {
+  color: var(--refund);
+  transform: rotate(2deg);
+}
+
+/* ---- The travel line: the same client as a trip on offer ---- */
+
+/* The wordmark is set as text: a name, not a mark. */
+.wordmark {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: var(--display-tracking);
+  line-height: 1;
+}
+
+.wordmark em {
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+a.brand:has(.wordmark) {
+  text-decoration: none;
+}
+
+/* A filled button keeps its own colour for its edge on hover, rather than taking the ink rule. */
+:root[data-brand="travel"] button.primary:hover:not(:disabled) {
+  border-color: var(--primary-hover);
+}
+
+.badge {
+  padding: 3px 9px;
+  border: var(--rule-width) solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* The product line, whole, in a strip directly under the header. */
+.tagline {
+  margin: -16px 0 24px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+/* A photo behind white type. The scrim is the one gradient on the page: it darkens the photo most
+   where the words sit, so they stay legible whatever the photo is brightest at. */
+.travel-hero,
+.trip-banner {
+  display: grid;
+  align-content: end;
+  border-radius: var(--radius);
+  background-position: center;
+  background-size: cover;
+  color: #ffffff;
+}
+
+.travel-hero {
+  min-height: 340px;
+  margin-bottom: 40px;
+  padding: 32px 20px;
+  background-image:
+    linear-gradient(180deg, rgb(0 0 0 / 0.05) 0%, rgb(0 0 0 / 0.5) 50%, rgb(0 0 0 / 0.72) 100%),
+    url(/brand/travel/hero.jpg);
+}
+
+.trip-banner {
+  min-height: 160px;
+  padding: 24px 20px;
+  background-image:
+    linear-gradient(180deg, rgb(0 0 0 / 0.1) 0%, rgb(0 0 0 / 0.55) 100%),
+    url(/brand/travel/sunset.jpg);
+}
+
+.travel-hero h1,
+.trip-banner h1 {
+  color: #ffffff;
+}
+
+.travel-hero h1 {
+  font-size: clamp(2.25rem, 7vw, 4.25rem);
+  line-height: 1.02;
+}
+
+.travel-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 500;
+}
+
+.travel-hook {
+  max-width: 36rem;
+  padding-left: 12px;
+  border-left: 4px solid var(--accent);
+  font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.entry-main {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.offer-card {
+  padding: 20px;
+  border: var(--rule-width) solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.offer-route {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.offer-caption {
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+.offer-terms {
+  padding: 12px 0 0;
+  border-top: var(--rule-width) solid var(--rule);
+  font-weight: 600;
+  list-style: none;
+}
+
+/* Its own band, drawn nothing like the card above it: a notice about the offer, never part of it. */
+.demo-notice {
+  padding: 14px 16px;
+  border: 1.5px solid var(--ink);
+  border-left-width: 6px;
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 0.9375rem;
+}
+
+.demo-notice strong {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* The section spaces the list from its heading; only the list's own bottom margin goes. */
+.terms ol {
+  margin-bottom: 0;
+  padding-left: 1.25rem;
+  max-width: 38rem;
+  color: var(--ink-muted);
+}
+
+.terms li + li {
+  margin-top: 8px;
+}
+
+.testnet-funds {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: var(--rule-width) solid var(--rule);
+}
+
+.testnet-funds h2 {
+  font-size: 1.25rem;
+}
+
+.testnet-funds ol {
+  margin: 12px 0 0;
+  padding-left: 1.25rem;
+  max-width: 44rem;
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+.testnet-funds li + li {
+  margin-top: 6px;
+}
+
+@media (min-width: 720px) {
+  .wordmark {
+    font-size: 1.75rem;
+  }
+
+  .tagline {
+    margin-top: -32px;
+    margin-bottom: 32px;
+  }
+
+  .travel-hero {
+    min-height: 420px;
+    margin-bottom: 56px;
+    padding: 48px 40px;
+  }
+
+  .trip-banner {
+    padding: 32px 32px;
+  }
+
+  .offer-card {
+    padding: 24px;
+  }
+}

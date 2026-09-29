@@ -165,11 +165,16 @@ exist today.
 | Path | What |
 |---|---|
 | `contracts/` | The escrow application: Algorand Python source, compiled TEAL and ARC-56 artifacts, and its 140-test suite |
-| `docs/specs/escrow-contract.md` | The specification it was built from — states, storage layout, ABI, authorisation, invariants, failure modes |
+| `api/` | The x402 resource server. `routes.py` builds the `402` (scheme `exact`, `payTo` the escrow app account); `payment_group.py` refuses, before settlement, a transfer that carries no `join` call, since such a transfer is not a purchase and could not be recovered |
+| `web/` | The browser client both live apps serve. `payment/buildJoinGroup.ts` builds the buyer's group, `payment/assertPayTo.ts` refuses any `payTo` that is not the escrow app's address, `chain/calls.ts` sends the permissionless refund calls |
+| `agents/` | Operator and test tooling: open a pool from a frozen manifest, release it with the file's IPFS link in the note, and the lifecycle calls (`expire`, `refund`, `claim`, `close`) |
+| `tests/` | The backend suite. `FINDINGS.md` records the facilitator settling the transfer-plus-`join` group, including a signature from Pera; `e2e/REHEARSAL.md` records real TestNet settlements and a full expire-and-refund run; golden vectors pin the TypeScript and Python group builders to identical bytes |
+| `editions/` | Each edition's free tier: the free report, its extract, and the manifest holding the sha256 a pool commits to |
+| `docs/specs/` | The specifications: the escrow contract, the pool client, edition release, the delivery-escrow backend and client, discovery and attribution |
 
-Not published yet: the resource server that answers the x402 `402`, the web client, and the
-operator tooling. This repository is the part that holds the money, which is the part worth
-checking.
+The delivery-escrow route in `api/` (`POST /pin`) is built up to settlement only: its delivery half
+is not, so it is off on every live host. Some comments cite design notes, runbooks and assistant
+configuration that are not published.
 
 ### Verify what is actually running
 
@@ -268,11 +273,13 @@ This is the residual trust in the design, and naming it is part of the design.
 
 To keep v1 simple, only the contract's admin, its deployer, can open agreements. So you deploy your
 own copy of this contract, open an agreement with a price, a seat count (up to 20), a deadline and
-a sha256, and point your x402 route's `payTo` at the application account.
+a sha256, and point your x402 route's `payTo` at the application account. `agents/create_pool.py`
+opens one from a manifest, and `api/` is a working route to start from.
 
 Standard `exact` scheme, no protocol change. Each buyer's payment group carries the ordinary USDC
 transfer and a `join` call naming the agreement, and the facilitator settles it like any other
-`exact` payment. `docs/specs/escrow-contract.md` has the ABI and the group layout. `quorum` and
+`exact` payment. `docs/specs/escrow-contract.md` has the ABI and the group layout, and
+`web/src/payment/buildJoinGroup.ts` builds it. `quorum` and
 `hash` ship today; `schema` and `evaluator` are designed in. A permissionless version will follow
 in v2.
 
@@ -285,6 +292,22 @@ algokit localnet start            # Docker
 poetry run pytest                 # the escrow test suite
 algokit project run build         # recompile TEAL and ARC-56 artifacts
 ```
+
+The resource server, tooling and client are two more dependency surfaces, each with its own CI job
+(`.github/workflows/ci.yml`):
+
+```bash
+pip install -r requirements-dev.txt          # from the repository root, Python 3.12
+pytest -m "not localnet and not testnet"     # the offline backend suite
+
+cd web
+npm ci
+npm run typecheck && npm run lint && npm test
+npm run build                                 # the client, to web/dist
+```
+
+`pytest -m testnet` runs the TestNet circuit test: real settlements through the facilitator. It
+needs funded TestNet keys in `.env` (see `.env.example`) and is never run in CI.
 
 `contracts/README.md` has the longer AlgoKit walkthrough. `join_spike` alongside the escrow is a
 deliberate stub — it exists only to prove that a payment group carrying an extra buyer-signed

@@ -1,0 +1,10 @@
+# Test and lint tooling for the repository-root surface. Installs the runtime
+# dependencies too, so one command prepares a working tree:
+#     pip install -r requirements-dev.txt
+-r requirements.txt
+
+# Pinned from what pip actually resolved: CI installs from this file, so an
+# unpinned tool would let CI and a local tree disagree about a lint rule.
+pytest==9.1.1
+pytest-asyncio==1.4.0
+ruff==0.16.4

@@ -1,0 +1,10 @@
+# Line endings, because this repository publishes files people hash.
+#
+# `editions/` carries artifacts whose sha256 is committed in the manifest
+# beside them, and `editions/README.md` tells a reader to check one against
+# the other. Git for Windows defaults to core.autocrlf=true, which would check
+# those files out as CRLF and make every digest disagree with the file it
+# describes -- a buyer following the instructions would conclude they had been
+# handed tampered bytes. The files are committed as they were rendered, LF;
+# this keeps the distribution channel from rewriting them.
+editions/** -text

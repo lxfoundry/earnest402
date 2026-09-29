@@ -1,0 +1,15 @@
+# Dependencies for api/, agents/ and tests/ (the x402 TestNet spike).
+# Separate from contracts/'s AlgoKit-managed Poetry environment — different
+# dependency surface, do not merge them.
+#
+# Tested with Python 3.12. On this machine, Python 3.14 fails to build one
+# of algosdk's transitive dependencies from source; use a 3.12 interpreter
+# if you hit a build error during install.
+#
+# The py-algorand-sdk PyPI package provides the `algosdk` import.
+
+fastapi==0.141.1
+uvicorn==0.52.4
+python-dotenv==1.2.3
+py-algorand-sdk==2.12.0
+x402-avm[fastapi,avm,extensions,httpx,requests]==2.0.2
