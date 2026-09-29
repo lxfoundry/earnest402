@@ -8,3 +8,7 @@ Licensed under the Apache License, Version 2.0. See the LICENSE file.
 The images docs/images/travel.jpg and docs/images/travel-endings.png are frames of the Earnest
 Travel demo page. They include photos by Jerry Zhang and Thomas Fryatt, used under the Unsplash
 License (https://unsplash.com/license) and not covered by the Apache License.
+
+The photos web/public/brand/travel/hero.jpg and web/public/brand/travel/sunset.jpg are used under
+the Unsplash License and are not covered by the Apache License; web/public/brand/travel/CREDITS.md
+names each photo's author and page.

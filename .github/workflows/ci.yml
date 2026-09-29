@@ -1,0 +1,201 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One run per ref. A pull-request run superseded by a newer push is cancelled;
+# a run on main is not, so every merged commit is validated on its own.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # Local, CI and the lock file all agree on these three. contracts/pyproject.toml
+  # requires ^3.12 and the suite has only ever been run on 3.12; the patch is
+  # pinned so a runner toolcache refresh cannot move it underneath us.
+  PYTHON_VERSION: "3.12.10"
+  POETRY_VERSION: "2.4.1"
+  ALGOKIT_VERSION: "2.10.2"
+
+jobs:
+  contracts:
+    name: contracts — lint, build, test
+    runs-on: ubuntu-latest
+    # The suite is the long pole: 126 tests against LocalNet, ~9 minutes on a
+    # development machine. This is a ceiling for a hung run, not a target.
+    timeout-minutes: 45
+    defaults:
+      run:
+        # contracts/ is the AlgoKit project root -- it holds .algokit.toml,
+        # where the `project run` targets are declared, and pyproject.toml.
+        # The repository root holds no project file.
+        working-directory: contracts
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry and AlgoKit
+        # Both pinned: the compiler and the client generator come from the lock,
+        # but the tools that read it do not. `--force` because the runner image
+        # may already ship one of them, and pipx will not replace an existing
+        # install without it.
+        run: |
+          pipx install --force poetry==${{ env.POETRY_VERSION }}
+          pipx install --force algokit==${{ env.ALGOKIT_VERSION }}
+
+      - name: Restore the virtual environment
+        uses: actions/cache@v6
+        with:
+          # contracts/poetry.toml sets in-project virtualenvs, so the whole
+          # environment is one directory, keyed by the lock that produced it.
+          path: contracts/.venv
+          key: venv-${{ runner.os }}-py${{ env.PYTHON_VERSION }}-${{ hashFiles('contracts/poetry.lock') }}
+
+      - name: Check the lock is in sync with pyproject.toml
+        # A dependency edited in pyproject.toml but never re-locked would
+        # otherwise pass CI and fail on the next fresh clone.
+        run: poetry check --lock
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Lint
+        # `ruff check` and `ruff format --check`: both non-mutating, and both
+        # ahead of build and test so they gate the sources as committed.
+        run: algokit project run lint
+
+      - name: Build
+        run: algokit project run build
+
+      - name: Check the committed artifacts match the build
+        # Fails when a contract change was committed without the recompiled
+        # TEAL, ARC-56 spec and typed client that the tests import.
+        run: algokit project run ci-teal-diff
+
+      - name: Start LocalNet
+        # The suite is not a mock: it deploys the application to a real dev-mode
+        # network and drives it through every state transition.
+        run: algokit localnet start
+
+      - name: Wait for LocalNet
+        # `localnet start` returns once the containers are up. Poll the two
+        # services the suite actually talks to -- algod for every transaction,
+        # kmd for the dispenser account the fixtures fund from -- so a slow
+        # first start fails here, legibly, instead of as a connection error
+        # inside the first test. Both endpoints answer 200 without a token.
+        run: |
+          for _ in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:4001/health &&
+               curl -sf -o /dev/null http://localhost:4002/versions; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "LocalNet did not answer on algod:4001 and kmd:4002 within 120s"
+          exit 1
+
+      - name: Test
+        run: algokit project run test
+
+  backend:
+    name: backend — lint, offline tests
+    runs-on: ubuntu-latest
+    # Offline only: no network, no facilitator, no LocalNet. Minutes rather than
+    # tens of minutes, so a configuration mistake is reported before the
+    # contract suite has finished starting its containers.
+    timeout-minutes: 15
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        # requirements-dev.txt pulls in requirements.txt, so this is the whole
+        # surface. Every tool in it is pinned; an unpinned linter would let CI
+        # and a local tree disagree about a rule.
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Lint
+        # Both non-mutating, and ahead of the tests so they gate the sources as
+        # committed. Scoped to the three root directories, which must stay in
+        # step with the surface ruff.toml names: contracts/ has its own job,
+        # its own ruff configuration and its own lock file, and must never be
+        # linted twice under two configurations.
+        run: |
+          ruff check api agents tests
+          ruff format --check api agents tests
+
+      - name: Test
+        # tests/conftest.py sets the handful of public values api/server.py
+        # reads at import time, so this asserts the same thing here as it does
+        # on a developer machine that has a .env and on one that does not.
+        # `not testnet` excludes the circuit test, which settles real
+        # payments. It would skip here anyway for want of a .env; the filter
+        # says so rather than leaving it to a fixture.
+        run: pytest -m "not localnet and not testnet"
+
+  web:
+    name: web — typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    # No network, no LocalNet, no browser: the two modules that carry the risk
+    # (the group builder and the reducer) are pure, so this is the gate for
+    # every pull request and it runs in a couple of minutes.
+    timeout-minutes: 15
+    defaults:
+      run:
+        # web/ is its own dependency surface -- npm and package.json, separate
+        # from requirements.txt at the root and from contracts/'s Poetry
+        # project. The three are never merged.
+        working-directory: web
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          # Read from web/.nvmrc so the pin lives in one place and a local
+          # `nvm use` and CI cannot disagree. Pinned to a full patch for the
+          # same reason PYTHON_VERSION is: a runner toolcache refresh must not
+          # move the toolchain underneath us.
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        # `npm ci` fails when package.json and the lock file disagree, which is
+        # what we want in CI -- `npm install` would quietly reconcile them and
+        # the lock file would stop being a claim about what was tested.
+        run: npm ci
+
+      - name: Typecheck
+        # Non-mutating, and ahead of the tests so both gate the sources as
+        # committed rather than something a fixer rewrote afterwards.
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        # Last: a bundle is only worth producing from sources that passed.
+        run: npm run build

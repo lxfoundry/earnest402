@@ -1,0 +1,146 @@
+<!doctype html>
+<!--
+  Source of .github/social-preview.png, the repository's social preview image (1280×640).
+  Colours and fonts come from web/src/ui/tokens.css and the logo from web/public/logo.svg,
+  so a change to either is picked up by re-rendering. From the repository root:
+
+    chrome --headless=new --hide-scrollbars --force-device-scale-factor=1 \
+      --virtual-time-budget=8000 --window-size=1280,640 \
+      --screenshot=.github/social-preview.png .github/social-preview.html
+
+  GitHub has no API for the preview image: upload it under Settings → General → Social preview.
+-->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Earnest social preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- display=block, not the display=swap tokens.css gives for live pages: a screenshot taken while
+     swap is still showing the fallback font would capture that font, so this render waits for the real one. -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=block" rel="stylesheet">
+<link rel="stylesheet" href="../web/src/ui/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-text);
+    padding: 52px 64px 48px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .top img { height: 40px; display: block; }
+  .rails { font-family: var(--font-mono); font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+
+  .middle { display: grid; grid-template-columns: 1fr 404px; gap: 44px; align-items: center; padding: 14px 0 22px; }
+  h1 {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-variation);
+    font-weight: var(--display-weight);
+    letter-spacing: -0.02em;
+    font-size: 104px;
+    line-height: 0.94;
+  }
+  h1 .coin { color: var(--release); }
+  .lede { margin-top: 20px; font-size: 22px; line-height: 1.42; color: var(--ink-muted); max-width: 690px; }
+  .lede b { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  /* The receipt: one agreement, the three states it can be in */
+  .receipt {
+    background: var(--card);
+    border: var(--rule-width) solid var(--rule);
+    border-radius: var(--radius);
+    padding: 22px 24px 20px;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    box-shadow: 0 1px 0 var(--rule), 0 18px 40px -24px rgba(22, 20, 15, 0.35);
+    transform: rotate(1.2deg);
+  }
+  .receipt .head { display: flex; justify-content: space-between; color: var(--ink-muted); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px dashed var(--rule); }
+  .receipt dl { display: grid; grid-template-columns: 104px 1fr; row-gap: 7px; padding: 14px 0; border-bottom: 1px dashed var(--rule); }
+  .receipt dt { color: var(--ink-muted); }
+  .receipt dd { color: var(--ink); }
+  .states { display: grid; grid-template-columns: auto auto; column-gap: 14px; row-gap: 10px; align-items: center; justify-content: start; padding-top: 16px; }
+  .states .from { grid-row: 1 / span 2; display: flex; align-items: center; gap: 14px; }
+  .arrow { color: var(--ink-muted); font-size: 16px; }
+  .stamp {
+    display: inline-block;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+    padding: 3px 9px 2px;
+    font-weight: 500;
+    font-size: 13.5px;
+    letter-spacing: 0.12em;
+  }
+  .stamp.held { color: var(--ink); }
+  .stamp.release { color: var(--release); transform: rotate(-3deg); }
+  .stamp.refund { color: var(--refund); transform: rotate(2deg); }
+  .branch { display: flex; align-items: center; gap: 10px; }
+  .branch small { color: var(--ink-muted); font-size: 12.5px; }
+
+  /* The ledger row: four features */
+  .ledger { display: grid; grid-template-columns: repeat(4, 1fr); border-top: var(--rule-strong); }
+  .ledger > div { padding: 16px 20px 0 0; }
+  .ledger > div + div { padding-left: 20px; border-left: var(--rule-width) solid var(--rule); }
+  .ledger code { font-family: var(--font-mono); font-size: 13.5px; color: var(--release); letter-spacing: 0.02em; }
+  .ledger h2 { font-family: var(--font-display); font-variation-settings: "opsz" 36, "SOFT" 30; font-weight: 600; font-size: 22px; margin: 4px 0 5px; letter-spacing: -0.005em; }
+  .ledger p { font-size: 14.5px; line-height: 1.4; color: var(--ink-muted); }
+</style>
+</head>
+<body>
+  <header class="top">
+    <img src="../web/public/logo.svg" alt="Earnest">
+    <span class="rails">x402 · USDC · Algorand</span>
+  </header>
+
+  <main class="middle">
+    <div>
+      <h1>If this,<br>then pay<span class="coin">.</span></h1>
+      <p class="lede">A standard x402 payment, <b>held in escrow on Algorand</b> until a machine can check the
+        condition. Released when it is met, <b>refunded on-chain</b> when it isn't.</p>
+    </div>
+
+    <aside class="receipt" aria-label="An example agreement">
+      <div class="head"><span>Agreement</span><span>example</span></div>
+      <dl>
+        <dt>condition</dt><dd>hash</dd>
+        <dt>commit</dt><dd>sha256:9f2c…e41a</dd>
+        <dt>amount</dt><dd>2.500000 USDC</dd>
+        <dt>deadline</dt><dd>in 24 h</dd>
+      </dl>
+      <div class="states">
+        <div class="from"><span class="stamp held">HELD</span><span class="arrow">→</span></div>
+        <div class="branch"><span class="stamp release">RELEASED</span><small>bytes match</small></div>
+        <div class="branch"><span class="stamp refund">REFUNDED</span><small>deadline missed</small></div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="ledger">
+    <div>
+      <code>hash</code>
+      <h2>Pay on delivery</h2>
+      <p>Released only if the bytes match the sha256 fixed before payment.</p>
+    </div>
+    <div>
+      <code>quorum</code>
+      <h2>Co-funded purchase</h2>
+      <p>Released when enough payers join before the deadline.</p>
+    </div>
+    <div>
+      <code>x402 exact</code>
+      <h2>No custom scheme</h2>
+      <p>A standard USDC payment, settled through the facilitator.</p>
+    </div>
+    <div>
+      <code>refund</code>
+      <h2>No arbitration</h2>
+      <p>Condition missed: every payer is refunded on-chain.</p>
+    </div>
+  </section>
+</body>
+</html>

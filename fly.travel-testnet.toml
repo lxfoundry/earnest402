@@ -1,0 +1,97 @@
+# Algorand TestNet deployment for the travel brand: a second deployment of the
+# pool route and the browser client, on its own escrow application and its own
+# host, beside fly.testnet.toml rather than in place of it.
+#
+#   fly deploy -c fly.travel-testnet.toml -a earnest-travel --build-arg VITE_OFFER_B64=<b64> --depot=false --remote-only --ha=false
+#
+# VITE_OFFER_B64 is supplied at deploy time as a build argument (shape in web/src/config.ts).
+# It is not in [build.args] below, and the image build refuses a travel bundle
+# built without it.
+#
+# Every value in this file is public: addresses, ids and endpoints. The host
+# holds no signing key. POST /pin is off, so the server refuses to boot if
+# ADMIN_MNEMONIC is set: never set it as a secret here.
+#
+# The host is fixed before the first settlement: one payTo, one domain. This
+# application's payments are served from earnest-travel.lxfoundry.ai and from
+# nowhere else, and no other deployment serves from that host.
+#
+# INDEX_AGREEMENT_ID is deliberately absent. It changes with every pool, and it
+# is set only as a secret, which restarts the machine without a rebuild:
+#
+#   fly secrets set INDEX_AGREEMENT_ID=<id> -a earnest-travel
+#
+# Were it in [env], the next deploy would put back whatever id this file
+# happened to hold. Unset, POST /index answers 503 no_pool_open.
+#
+# Pass -a earnest-travel to every fly command, deploy and secrets alike: the
+# fly.toml in the working directory names another app, and a command that is
+# not told which app to act on acts on that one.
+
+app = "earnest-travel"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Compiled into the client bundle at build time. Three must agree with [env]
+# below: VITE_NETWORK with NETWORK, VITE_ASSET_ID with USDC_ASA_ID and
+# VITE_APP_ID with APP_ID. VITE_BRAND picks which client the bundle is; the
+# offer that brand renders comes from the deploy command, not from here.
+[build.args]
+  VITE_NETWORK = "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+  VITE_ASSET_ID = "10458941"
+  VITE_APP_ID = "772795100"
+  VITE_FACILITATOR_URL = "https://facilitator.goplausible.xyz"
+  VITE_RESOURCE_HOST = "https://earnest-travel.lxfoundry.ai"
+  VITE_MAX_FILE_BYTES = "16777216"
+  VITE_ALGOD_URL = "https://testnet-api.4160.nodely.dev"
+  VITE_INDEXER_URL = "https://testnet-idx.4160.nodely.dev"
+  VITE_IPFS_GATEWAY = "https://ipfs.filebase.io"
+  VITE_BRAND = "travel"
+
+[env]
+  NETWORK = "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+  USDC_ASA_ID = "10458941"
+  APP_ID = "772795100"
+  APP_ACCOUNT = "ZUGHACLDTHEDD5QYKCCQLKFN3TUUS27VTOV22R37FKWCRDRSVMWPPBUJIY"
+  # The MainNet application's id, named so the boot guard refuses this file if
+  # it is ever pointed at it.
+  PRODUCTION_APP_ID = "3710645149"
+  # The facilitator's fee payer, as its /supported endpoint lists it.
+  FEE_PAYER = "ZMFK2OI7ZBD2U27ISERZC4S6LKM6WMFJPZQ4MYNJDZ2VNBNMBA67RA22AA"
+  TREASURY = "QS53S32PVPSB3X34VZ36TCRJL5TPU3AOR3UUZCT3A4EHYUU3KC2Z3REVPU"
+  VERIFIER = "O7ANAF5H3YHJHNQ7HLYP62Z2EDMU2N4C7DZL2CCOHJUFC4CNUFGLD7RRAE"
+  PUBLIC_HOST = "https://earnest-travel.lxfoundry.ai"
+  ALGOD_URL = "https://testnet-api.4160.nodely.dev"
+  FACILITATOR_URL = "https://facilitator.goplausible.xyz"
+  # One seat per traveller. INDEX_DESCRIPTION names the same count twice, so
+  # the two change together.
+  INDEX_SEATS = "3"
+  INDEX_SHARE_PRICE_MICRO = "5000000"
+  PIN_ROUTE_ENABLED = "false"
+  # This deployment's public catalogue description, in place of the default
+  # listing. The boot guard refuses it if it drops any of the clauses the
+  # default carries.
+  INDEX_DESCRIPTION = "Your payment group must include a join call against the escrow application, naming the agreement given in extra.agreementId — a transfer with no join call is not a purchase and the USDC it sends cannot be recovered. Earnest Travel: one seat on a sample group trip for 3 travellers. Your USDC is held by an Algorand escrow app; the trip file, whose sha256 was committed before you paid, is released against matching bytes only if 3 distinct buyers join before the deadline, and every seat is refunded on-chain if the trip does not fill or the trip file is not released by the deadline. One seat per address: a wallet that already holds a seat on this trip cannot buy a second one. Machine-verified only: no arbitration, no human in the loop. Demo notice: Algorand TestNet, test USDC; nothing is booked or sold, and the trip file cannot be exchanged for travel."
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  # A buyer's wallet round trip must not land on a machine that is still
+  # starting, and one that sleeps on idle is unreachable to anything probing it.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/healthz"
+    interval = "30s"
+    timeout = "5s"
+    # Boot reads the application account from algod before it answers.
+    grace_period = "30s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

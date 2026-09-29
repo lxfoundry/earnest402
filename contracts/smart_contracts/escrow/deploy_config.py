@@ -46,6 +46,11 @@ def deploy() -> None:
         create_params=EscrowMethodCallCreateParams(
             args=BootstrapArgs(usdc_asset_id=usdc_asset_id, treasury=treasury),
         ),
+        # Deploy is idempotent per creator and app name, so the same program
+        # under a second name is a second, independent application -- its own
+        # application account, and therefore its own payTo. Unset keeps the
+        # spec's own name and finds the existing deployment.
+        app_name=os.environ.get("ESCROW_APP_NAME") or None,
     )
 
     if result.operation_performed in [

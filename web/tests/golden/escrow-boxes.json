@@ -1,0 +1,312 @@
+{
+  "agreementBytes": 164,
+  "seatBytes": 40,
+  "zeroAddress": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+  "states": [
+    "OPEN",
+    "FUNDED",
+    "FILLED",
+    "RELEASED",
+    "EXPIRED",
+    "REFUNDING",
+    "REFUNDED"
+  ],
+  "vectors": [
+    {
+      "name": "open-pool-one-seat-sold",
+      "agreementId": "25",
+      "boxNames": {
+        "agreement": "YQAAAAAAAAAZ",
+        "roster": "cgAAAAAAAAAZ"
+      },
+      "agreement": {
+        "raw": "AAAAAAAAaqvpUQAAAAAAAYagAAUABQABAAAAAAAAAAAAAYag+jyPO+6SkeK7fOeAcNdObIzjB6pGUd+dLSp87z5es8cRERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 0,
+          "state": 0,
+          "deadline": "1789651281",
+          "sharePrice": "100000",
+          "minSeats": 5,
+          "maxSeats": 5,
+          "seats": 1,
+          "refundCursor": 0,
+          "unclaimedSeats": 0,
+          "totalHeld": "100000",
+          "commitSha256": "fa3c8f3bee9291e2bb7ce78070d74e6c8ce307aa4651df9d2d2a7cef3e5eb3c7",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "REREREREREREREREREREREREREREREREREREREREREQAAAAAAAGGoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "100000"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "refunding-one-paid-one-skipped",
+      "agreementId": "26",
+      "boxNames": {
+        "agreement": "YQAAAAAAAAAa",
+        "roster": "cgAAAAAAAAAa"
+      },
+      "agreement": {
+        "raw": "AAUAAAAAaqvpUQAAAAAAAYagAAUABQADAAIAAQAAAAAAAw1AAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8RERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 0,
+          "state": 5,
+          "deadline": "1789651281",
+          "sharePrice": "100000",
+          "minSeats": 5,
+          "maxSeats": 5,
+          "seats": 3,
+          "refundCursor": 2,
+          "unclaimedSeats": 1,
+          "totalHeld": "200000",
+          "commitSha256": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "REREREREREREREREREREREREREREREREREREREREREQAAAAAAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVAAAAAAABhqBmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZgAAAAAAAYagAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "KVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVDNKFTE",
+            "amount": "100000"
+          },
+          {
+            "payer": "MZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTEVMN3WE",
+            "amount": "100000"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "released-pool",
+      "agreementId": "27",
+      "boxNames": {
+        "agreement": "YQAAAAAAAAAb",
+        "roster": "cgAAAAAAAAAb"
+      },
+      "agreement": {
+        "raw": "AAMAAAAAaqvpUQAAAAAAAYagAAUABQAFAAAAAAAAAAAAAAAA+jyPO+6SkeK7fOeAcNdObIzjB6pGUd+dLSp87z5es8cRERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 0,
+          "state": 3,
+          "deadline": "1789651281",
+          "sharePrice": "100000",
+          "minSeats": 5,
+          "maxSeats": 5,
+          "seats": 5,
+          "refundCursor": 0,
+          "unclaimedSeats": 0,
+          "totalHeld": "0",
+          "commitSha256": "fa3c8f3bee9291e2bb7ce78070d74e6c8ce307aa4651df9d2d2a7cef3e5eb3c7",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "REREREREREREREREREREREREREREREREREREREREREQAAAAAAAAAAEREREREREREREREREREREREREREREREREREREREREREAAAAAAAAAABERERERERERERERERERERERERERERERERERERERERERAAAAAAAAAAAREREREREREREREREREREREREREREREREREREREREREQAAAAAAAAAAEREREREREREREREREREREREREREREREREREREREREREAAAAAAAAAAA=",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "expired-pool",
+      "agreementId": "28",
+      "boxNames": {
+        "agreement": "YQAAAAAAAAAc",
+        "roster": "cgAAAAAAAAAc"
+      },
+      "agreement": {
+        "raw": "AAQAAAAAaqvpUQAAAAAAAYagAAUABQACAAAAAAAAAAAAAw1A+jyPO+6SkeK7fOeAcNdObIzjB6pGUd+dLSp87z5es8cRERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 0,
+          "state": 4,
+          "deadline": "1789651281",
+          "sharePrice": "100000",
+          "minSeats": 5,
+          "maxSeats": 5,
+          "seats": 2,
+          "refundCursor": 0,
+          "unclaimedSeats": 0,
+          "totalHeld": "200000",
+          "commitSha256": "fa3c8f3bee9291e2bb7ce78070d74e6c8ce307aa4651df9d2d2a7cef3e5eb3c7",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "REREREREREREREREREREREREREREREREREREREREREQAAAAAAAGGoFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVAAAAAAABhqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "100000"
+          },
+          {
+            "payer": "KVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVDNKFTE",
+            "amount": "100000"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "refunded-pool",
+      "agreementId": "29",
+      "boxNames": {
+        "agreement": "YQAAAAAAAAAd",
+        "roster": "cgAAAAAAAAAd"
+      },
+      "agreement": {
+        "raw": "AAYAAAAAaqvpUQAAAAAAAYagAAUABQACAAIAAAAAAAAAAAAA+jyPO+6SkeK7fOeAcNdObIzjB6pGUd+dLSp87z5es8cRERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 0,
+          "state": 6,
+          "deadline": "1789651281",
+          "sharePrice": "100000",
+          "minSeats": 5,
+          "maxSeats": 5,
+          "seats": 2,
+          "refundCursor": 2,
+          "unclaimedSeats": 0,
+          "totalHeld": "0",
+          "commitSha256": "fa3c8f3bee9291e2bb7ce78070d74e6c8ce307aa4651df9d2d2a7cef3e5eb3c7",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "REREREREREREREREREREREREREREREREREREREREREQAAAAAAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "0"
+          },
+          {
+            "payer": "KVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVKVDNKFTE",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          },
+          {
+            "payer": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            "amount": "0"
+          }
+        ]
+      }
+    },
+    {
+      "name": "maximum-widths",
+      "agreementId": "18446744073709551615",
+      "boxNames": {
+        "agreement": "Yf//////////",
+        "roster": "cv//////////"
+      },
+      "agreement": {
+        "raw": "AQb///////////////////////////////////////////////////////////////////////////////////////8RERERERERERERERERERERERERERERERERERERERERESIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM=",
+        "expected": {
+          "condition": 1,
+          "state": 6,
+          "deadline": "18446744073709551615",
+          "sharePrice": "18446744073709551615",
+          "minSeats": 65535,
+          "maxSeats": 65535,
+          "seats": 65535,
+          "refundCursor": 65535,
+          "unclaimedSeats": 65535,
+          "totalHeld": "18446744073709551615",
+          "commitSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "beneficiary": "CEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEI7JH2AYM",
+          "verifier": "EIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRDOHSEZI",
+          "creator": "GMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZTGMZ6LH5CFA"
+        }
+      },
+      "roster": {
+        "raw": "RERERERERERERERERERERERERERERERERERERERERET//////////w==",
+        "expected": [
+          {
+            "payer": "IRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCEIRCNZMCIQI",
+            "amount": "18446744073709551615"
+          }
+        ]
+      }
+    }
+  ]
+}

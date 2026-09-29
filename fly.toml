@@ -1,0 +1,32 @@
+# TestNet discovery spike only. Serves one paid route bound to the real-USDC
+# application instance. Carries no signing material: every value below is
+# public on-chain or a public endpoint.
+app = "earnest-spike-discovery"
+primary_region = "cdg"
+
+[build]
+
+[env]
+  # Real-USDC application instance, app id 769608941.
+  APP_ACCOUNT = "D4SAMDS7SDVOU5OTL5GEZX4RXM43JEKBM6NFIIX6CPJRCHEKGK7WMGIKRY"
+  USDC_TESTNET_ASA_ID = "10458941"
+  FACILITATOR_URL = "https://facilitator.goplausible.xyz"
+  # Pins the catalogue identity. The server builds it from
+  # `route_config.resource or adapter.get_url()`, and get_url() includes the
+  # query string -- so without this, a route taking its input in the query
+  # registers one near-duplicate directory entry per distinct query instead of
+  # one entry whose settlement count rises.
+  RESOURCE_URL = "https://earnest-spike-discovery.fly.dev/escrow/join-spike"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  # A host that sleeps on idle is unreachable to anything that probes it,
+  # which is the confound this whole deployment exists to remove.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

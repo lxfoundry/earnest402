@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .ink { fill: #16140F; } .coin { fill: #1F7A4D; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #EFE8DA; } .coin { fill: #52B788; }
+    }
+  </style>
+  <path class="ink" d="M4 4H20V12H12V52H20V60H4ZM60 4H44V12H52V52H44V60H60Z"/>
+  <circle class="coin" cx="32" cy="32" r="12"/>
+</svg>
