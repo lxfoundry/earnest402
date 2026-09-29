@@ -13,11 +13,12 @@ import algosdk from 'algosdk'
  * fails until a call is built against the mismatched selector and rejected by
  * the contract for a reason that looks unrelated.
  *
- * The table below is complete: all seven methods this project's escrow
- * contract exposes, even though today's callers read five of them and build
- * one. Adding the other two now, while there is one place to add them, costs
- * nothing; adding an eighth for a method nothing calls would be the opposite
- * mistake, so this file stops at seven on purpose.
+ * The table below holds the seven methods of an agreement's lifecycle: the
+ * ones this client sends, or reads back off the indexer. The contract exposes
+ * twelve. The other five (`bootstrap`, `opt_in_asset`, `create_agreement`,
+ * `set_admin`, `set_paused`) are deployment and operator calls that no client
+ * builds or matches, so they are left out on purpose rather than spelled here
+ * for nothing.
  *
  * Selectors are the first four bytes of the SHA-512/256 hash of the method's
  * ARC-4 signature. They are hex here, not raw bytes, because that is the
