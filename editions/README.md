@@ -131,3 +131,16 @@ manifest carries the new digest of `edition-1-sample.html`.
 
 To check edition 2, run the commands under *Checking an edition yourself* with `edition-2` in
 place of `edition-1`, against `edition-2-manifest.json`.
+
+## Edition 3
+
+| | |
+|---|---|
+| Probed | 2026-10-02T15:18:07Z |
+| Rows | 2257 |
+| `sha256` | `3d4eaf9a7904af9b8990d0a20985e3698c5032af239d762277a3d62723d21e36` |
+| Full edition | 1,319,680 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-3-sample.html` |
+
+To check edition 3, run the commands under *Checking an edition yourself* with `edition-3` in
+place of `edition-1`, against `edition-3-manifest.json`.

@@ -19,7 +19,7 @@ the file isn't released by the deadline, every seat is refunded on-chain to the 
 |---|---|
 | **Buy a seat on MainNet**, real USDC | <https://earnest.lxfoundry.ai/app/> |
 | **Try the travel demo on TestNet**, free | <https://earnest-travel.lxfoundry.ai/app/> |
-| **Read the free report**, edition 2 | <https://earnest.lxfoundry.ai/app/editions/edition-2-sample.html> |
+| **Read the free report**, edition 3 | <https://earnest.lxfoundry.ai/app/editions/edition-3-sample.html> |
 | **Check the contract yourself** | [Verify what is actually running](#verify-what-is-actually-running) |
 
 ## What Earnest is
@@ -62,22 +62,22 @@ Earnest's first product is the **Algorand x402 Route Index**: every x402 route t
 directory lists for USDC on Algorand, probed live. Each edition is produced and hashed before its
 seats open.
 
-**Edition 2 is for sale now.** On 28 Sep we called, unpaid, all 2,103 endpoints the directory lists:
+**Edition 3 is for sale now.** On 2 Oct we called, unpaid, all 2,257 endpoints the directory lists:
 
-- 1,536 asked for payment, 462 answered without a 402, 105 were unreachable
-- of 1,097 with both a listed and a live price, 223 differ, 53 by 10× or more
+- 2,045 asked for payment, 197 answered without a 402, 13 were unreachable, 2 were rate-limited
+- of 2,040 with both a listed and a live price, 569 differ, 264 by 10× or more
 
 Free report, aggregates only:
-**<https://earnest.lxfoundry.ai/app/editions/edition-2-sample.html>**
+**<https://earnest.lxfoundry.ai/app/editions/edition-3-sample.html>**
 
 A seat buys the full edition, naming every endpoint and its payee, in 3 formats: HTML to read, CSV
 to analyse, JSON for agents. The sha256 committed on chain is the JSON's:
 
 ```
-a40ab58f47a662d3126fa843a5038b81d2bd0ca82854f2625e6a49ac33e4f2fb
+3d4eaf9a7904af9b8990d0a20985e3698c5032af239d762277a3d62723d21e36
 ```
 
-- **5 seats, 5 USDC each.** Condition: 5 distinct buyers must join before **Mon 5 Oct 2026, 10:00
+- **5 seats, 5 USDC each.** Condition: 5 distinct buyers must join before **Mon 5 Oct 2026, 18:12
   UTC**, one seat per wallet
 - If the seats don't fill, or we don't release by then, the edition is not published and every
   seat is refunded on-chain to the wallet that paid
@@ -92,7 +92,8 @@ You need an Algorand wallet with 5 USDC (tested with Pera); the facilitator curr
 network fee.
 
 Edition 1 ran the same way, with real money. Two buyers joined, the seats didn't fill, the edition
-was not published, and the contract refunded both on-chain.
+was not published, and the contract refunded both on-chain. Edition 2 filled: 5 buyers joined, and
+it was released on 2 Oct 2026 at 15:55 UTC.
 
 ### 2. On TestNet, for free: Earnest Travel
 
