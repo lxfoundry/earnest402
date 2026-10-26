@@ -1,0 +1,189 @@
+{
+  "asset": "USDC (ASA 31566704)",
+  "edition": 8,
+  "extract_rule": "20 rows taken from the 613 rows whose catalogued and live prices both exist and differ, ordered by the larger price divided by the smaller, descending, ties broken by resource_url ascending, at index i * 613 // 20 for i in 0..19. Columns carried: catalogued_price_usdc, live_price_usdc, liveness.",
+  "probed_at": "2026-10-19T08:13:13Z",
+  "rows": [
+    {
+      "catalogued_price_usdc": "0.000001",
+      "live_price_usdc": "0.100000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.600000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.050000",
+      "live_price_usdc": "0.003000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.300000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.300000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.300000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.300000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.300000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.060000",
+      "live_price_usdc": "0.006000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.050000",
+      "live_price_usdc": "0.005000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.050000",
+      "live_price_usdc": "0.006000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.100000",
+      "live_price_usdc": "0.017000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.020000",
+      "live_price_usdc": "0.100000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.002000",
+      "live_price_usdc": "0.010000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.100000",
+      "live_price_usdc": "0.400000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.015000",
+      "live_price_usdc": "0.005000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.050000",
+      "live_price_usdc": "0.017000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.002000",
+      "live_price_usdc": "0.001000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.002000",
+      "live_price_usdc": "0.001000",
+      "liveness": "live"
+    },
+    {
+      "catalogued_price_usdc": "0.003000",
+      "live_price_usdc": "0.002000",
+      "liveness": "live"
+    }
+  ],
+  "sample_of": "bdebd5fa4d9d60886884eb03a40934ce4db15ec302b1a470d6bd18c589447873",
+  "summary": {
+    "distinct_hosts": 172,
+    "distinct_payees": 148,
+    "live_price_usdc": {
+      "max": "41.398725",
+      "median": "0.020000",
+      "min": "0.000100"
+    },
+    "liveness": {
+      "live": 2097,
+      "no-402": 251,
+      "rate-limited": 2,
+      "undecodable": 0,
+      "unreachable": 11
+    },
+    "methods": {
+      "catalogued": {
+        "GET": 1399,
+        "POST": 947,
+        "PUT": 15
+      },
+      "catalogued_missing": 0,
+      "live": {
+        "GET": 1299,
+        "POST": 798
+      },
+      "live_other_than_listed": 0
+    },
+    "payers": {
+      "max": 4097,
+      "median": 5,
+      "payees_counted": 147,
+      "payees_uncounted": 1
+    },
+    "prices": {
+      "differ": 613,
+      "live_higher": 332,
+      "live_lower": 281,
+      "magnitude": {
+        "10x_or_more": 295,
+        "2x_to_10x": 277,
+        "under_2x": 41
+      },
+      "rows_with_both": 2092
+    },
+    "routes": 2361,
+    "settles": {
+      "rows_reporting": 2361,
+      "total": 813580
+    },
+    "transport": {
+      "http": 66,
+      "https": 2294,
+      "other": 1
+    },
+    "volume": {
+      "endpoint_challenge_total_usdc": "110434.618808",
+      "endpoint_total_usdc": "120316.717368",
+      "endpoints_counted": 2339,
+      "endpoints_unmatched": 22,
+      "payee_challenge_total_usdc": "125020.126634",
+      "payee_total_usdc": "129947.806197",
+      "payees_counted": 148,
+      "payees_unmatched": 0
+    }
+  },
+  "total_rows": 2361,
+  "withheld_columns": [
+    "resource_url",
+    "pay_to",
+    "merchant_name",
+    "catalogued_method",
+    "live_method",
+    "settles",
+    "volume_usdc",
+    "volume_challenge_usdc",
+    "distinct_payers",
+    "payee_volume_usdc",
+    "payee_volume_challenge_usdc"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "edition": 7,
+  "file": "edition-7.json",
+  "files": {
+    "edition-7-sample.html": "9606763ea14d5f748f90bf427f7e861810dfd1488bfe6d18e4895c42c9cdde7e",
+    "edition-7-sample.json": "21957db7833097219d36f63955d36bb64d2fe30943f3f990b7582ec885a8dba7",
+    "edition-7.csv": "43757a34f0d50c093f3d6c4a99f678364220b08fea4d7747c037129eb868c0ff",
+    "edition-7.html": "5f06faa230f1c1947fda5e9500dd785c680db0c77f8f9402ae38550873fee5c0",
+    "edition-7.json": "fb5377aaf670f06e7d191cba161b921b3fd49b95752c29755e995cf1f59b4230"
+  },
+  "probed_at": "2026-10-13T12:52:42Z",
+  "rows": 2340,
+  "sample": "edition-7-sample.json",
+  "sample_sha256": "21957db7833097219d36f63955d36bb64d2fe30943f3f990b7582ec885a8dba7",
+  "sha256": "fb5377aaf670f06e7d191cba161b921b3fd49b95752c29755e995cf1f59b4230"
+}

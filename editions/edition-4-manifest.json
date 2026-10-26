@@ -1,0 +1,16 @@
+{
+  "edition": 4,
+  "file": "edition-4.json",
+  "files": {
+    "edition-4-sample.html": "c585afec635b83bc83f03fb4e443c815d62d5553652a3a562e139a1a286fc091",
+    "edition-4-sample.json": "6c99c553dd6a0b6610050fb3e10bcf1a409a9ac42b0a0b8efb63bf941a86e7d1",
+    "edition-4.csv": "47644e5b09f93ec012fcba50d968a3ddc70319add3cf7d63b6b329a6fc3f24bc",
+    "edition-4.html": "07b202079246499365b7d3eca29d0c929291ab2387b82d004a082e6dde45b31f",
+    "edition-4.json": "cba25ba90d4f8835e117add8151951a8a35d662d3e81756c583a64fe8d122eff"
+  },
+  "probed_at": "2026-10-05T19:20:49Z",
+  "rows": 2283,
+  "sample": "edition-4-sample.json",
+  "sample_sha256": "6c99c553dd6a0b6610050fb3e10bcf1a409a9ac42b0a0b8efb63bf941a86e7d1",
+  "sha256": "cba25ba90d4f8835e117add8151951a8a35d662d3e81756c583a64fe8d122eff"
+}

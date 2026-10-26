@@ -144,3 +144,81 @@ place of `edition-1`, against `edition-2-manifest.json`.
 
 To check edition 3, run the commands under *Checking an edition yourself* with `edition-3` in
 place of `edition-1`, against `edition-3-manifest.json`.
+
+## Edition 4
+
+| | |
+|---|---|
+| Probed | 2026-10-05T19:20:49Z |
+| Rows | 2283 |
+| `sha256` | `cba25ba90d4f8835e117add8151951a8a35d662d3e81756c583a64fe8d122eff` |
+| Full edition | 1,336,667 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-4-sample.html` |
+
+To check edition 4, run the commands under *Checking an edition yourself* with `edition-4` in
+place of `edition-1`, against `edition-4-manifest.json`.
+
+## Edition 5
+
+| | |
+|---|---|
+| Probed | 2026-10-07T13:59:17Z |
+| Rows | 2289 |
+| `sha256` | `4964e392f0dbf63259889812b70c1cb27bb25c38a7d4831806fef0b19586c80f` |
+| Full edition | 1,340,116 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-5-sample.html` |
+
+To check edition 5, run the commands under *Checking an edition yourself* with `edition-5` in
+place of `edition-1`, against `edition-5-manifest.json`.
+
+## Edition 6
+
+| | |
+|---|---|
+| Probed | 2026-10-10T08:11:20Z |
+| Rows | 2313 |
+| `sha256` | `7ffe75dc60e2201b8b35f8721df317a2433304a73f99087ea6498c30eabec740` |
+| Full edition | 1,354,048 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-6-sample.html` |
+
+To check edition 6, run the commands under *Checking an edition yourself* with `edition-6` in
+place of `edition-1`, against `edition-6-manifest.json`.
+
+## Edition 7
+
+| | |
+|---|---|
+| Probed | 2026-10-13T12:52:42Z |
+| Rows | 2340 |
+| `sha256` | `fb5377aaf670f06e7d191cba161b921b3fd49b95752c29755e995cf1f59b4230` |
+| Full edition | 1,370,104 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-7-sample.html` |
+
+To check edition 7, run the commands under *Checking an edition yourself* with `edition-7` in
+place of `edition-1`, against `edition-7-manifest.json`.
+
+## Edition 8
+
+| | |
+|---|---|
+| Probed | 2026-10-19T08:13:13Z |
+| Rows | 2361 |
+| `sha256` | `bdebd5fa4d9d60886884eb03a40934ce4db15ec302b1a470d6bd18c589447873` |
+| Full edition | 1,382,590 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-8-sample.html` |
+
+To check edition 8, run the commands under *Checking an edition yourself* with `edition-8` in
+place of `edition-1`, against `edition-8-manifest.json`.
+
+## Edition 9
+
+| | |
+|---|---|
+| Probed | 2026-10-26T15:14:14Z |
+| Rows | 1783 |
+| `sha256` | `468330eef09e3983c3bcb6c5d524fb3662ed4d758d5f3ad748911f8456a8a143` |
+| Full edition | 1,037,573 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-9-sample.html` |
+
+To check edition 9, run the commands under *Checking an edition yourself* with `edition-9` in
+place of `edition-1`, against `edition-9-manifest.json`.
