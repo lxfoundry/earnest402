@@ -222,3 +222,16 @@ place of `edition-1`, against `edition-8-manifest.json`.
 
 To check edition 9, run the commands under *Checking an edition yourself* with `edition-9` in
 place of `edition-1`, against `edition-9-manifest.json`.
+
+## Edition 10
+
+| | |
+|---|---|
+| Probed | 2026-11-02T09:49:34Z |
+| Rows | 1793 |
+| `sha256` | `8341775284f23075a6fb5c7b97eb8e3206becc79483eab84199bd7c5fff8b34c` |
+| Full edition | 1,042,706 bytes, not committed -- delivered to seat holders as a CID on release |
+| Free report | `https://earnest.lxfoundry.ai/app/editions/edition-10-sample.html` |
+
+To check edition 10, run the commands under *Checking an edition yourself* with `edition-10` in
+place of `edition-1`, against `edition-10-manifest.json`.

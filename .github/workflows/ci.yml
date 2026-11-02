@@ -18,7 +18,9 @@ permissions:
 env:
   # Local, CI and the lock file all agree on these three. contracts/pyproject.toml
   # requires ^3.12 and the suite has only ever been run on 3.12; the patch is
-  # pinned so a runner toolcache refresh cannot move it underneath us.
+  # pinned so a runner toolcache refresh cannot move it underneath us. The jobs
+  # pin their runner image for the same reason: setup-python publishes builds
+  # per image, and when ubuntu-latest moved to 26.04 it had no 3.12.10.
   PYTHON_VERSION: "3.12.10"
   POETRY_VERSION: "2.4.1"
   ALGOKIT_VERSION: "2.10.2"
@@ -26,7 +28,7 @@ env:
 jobs:
   contracts:
     name: contracts — lint, build, test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # The suite is the long pole: 126 tests against LocalNet, ~9 minutes on a
     # development machine. This is a ceiling for a hung run, not a target.
     timeout-minutes: 45
@@ -110,7 +112,7 @@ jobs:
 
   backend:
     name: backend — lint, offline tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Offline only: no network, no facilitator, no LocalNet. Minutes rather than
     # tens of minutes, so a configuration mistake is reported before the
     # contract suite has finished starting its containers.
@@ -153,7 +155,7 @@ jobs:
 
   web:
     name: web — typecheck, lint, test, build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # No network, no LocalNet, no browser: the two modules that carry the risk
     # (the group builder and the reducer) are pure, so this is the gate for
     # every pull request and it runs in a couple of minutes.

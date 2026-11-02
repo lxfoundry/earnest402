@@ -19,7 +19,7 @@ the file isn't released by the deadline, every seat is refunded on-chain to the 
 |---|---|
 | **Buy a seat on MainNet**, real USDC | <https://earnest.lxfoundry.ai/app/> |
 | **Try the travel demo on TestNet**, free | <https://earnest-travel.lxfoundry.ai/app/> |
-| **Read the free report**, edition 9 | <https://earnest.lxfoundry.ai/app/editions/edition-9-sample.html> |
+| **Read the free report**, edition 10 | <https://earnest.lxfoundry.ai/app/editions/edition-10-sample.html> |
 | **Check the contract yourself** | [Verify what is actually running](#verify-what-is-actually-running) |
 
 ## What Earnest is
